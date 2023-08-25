@@ -1,6 +1,8 @@
 # AEC
 Afers Exteriors Capitalitzats
 
+![Game view in Beta V.0.1](assets\doc\game_view_V.0.1.png)
+
 ## To do
 - persones que gasten recursos en el th a canvi de diners, s'han de comprar i si no dones prou van marxant
 - velocitat guanys
