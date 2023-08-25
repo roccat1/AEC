@@ -1,5 +1,6 @@
 # AEC
 Afers Exteriors Capitalitzats
+https://github.com/roccat1/AEC
 
 ![game_view](https://github.com/roccat1/AEC/assets/58339860/da9c183d-dcf9-46b7-a879-18a05e810c2b)
 
@@ -13,7 +14,8 @@ Afers Exteriors Capitalitzats
 # Chuleta github
 git status
 
-git fetch  //comprovar
+git fetch  //comprovar agafar de remot
+git checkout
 git pull
 
 git add .

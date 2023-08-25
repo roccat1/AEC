@@ -1,9 +1,12 @@
 #Afers Exteriors Capitalitzats
 
 #Llibreries
-import pygame
+import pygame, json, time
+
+#arxius
 from paths import *
-import button, gameClass, json
+import button
+import gameClass
 
 #import values
 with open("values.json", "r") as f:
@@ -16,7 +19,9 @@ screen = pygame.display.set_mode((resolution[0], resolution[1]))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Afers Exteriors Capitalitzats (AEC)')
 running = True
+giantFont = pygame.font.SysFont("Arial", 100)
 font = pygame.font.SysFont("Arial", 36)
+fontSmall = pygame.font.SysFont("Arial", 26)
 dT=0
 
 game = gameClass.Game()
@@ -25,11 +30,14 @@ game = gameClass.Game()
 buildingNameSurf = font.render(game.whatIsSelected, True, "white")
 infoLvlSurf = font.render("", True, "white")
 
+populationSurf = fontSmall.render(str(game.population), True, "black")
+warningSurf = giantFont.render("Warning", True, "red")
+
 storageSurfs = {
-    "money": font.render(str(round(game.storage["money"])), True, "black"),
-    "wood": font.render(str(round(game.storage["wood"])), True, "black"),
-    "food": font.render(str(round(game.storage["food"])), True, "black"),
-    "stone": font.render(str(round(game.storage["stone"])), True, "black")
+    "money": fontSmall.render(str(round(game.storage["money"])), True, "black"),
+    "wood": fontSmall.render(str(round(game.storage["wood"])), True, "black"),
+    "food": fontSmall.render(str(round(game.storage["food"])), True, "black"),
+    "stone": fontSmall.render(str(round(game.storage["stone"])), True, "black")
 }
 
 textMenuSurfs = []
@@ -47,6 +55,11 @@ upgradeModel = button.Button(resolution[0]/2-120, resolution[1]-100, pygame.imag
 #=
 confirmUpgradeModel = button.Button(resolution[0]/2+80, resolution[1]/2+80, pygame.image.load(acceptTexturePath).convert_alpha(), 1)
 cancelUpgradeModel = button.Button(resolution[0]/2-160, resolution[1]/2+80, pygame.image.load(cancelTexturePath).convert_alpha(), 1)
+cancelTHInfoModel = button.Button(resolution[0]/2-40, resolution[1]/2+80, pygame.image.load(cancelTexturePath).convert_alpha(), 1)
+
+addCitizenModel = button.Button(resolution[0]/2+80, resolution[1]/2-20, pygame.image.load(addTexturePath).convert_alpha(), 1)
+subtractCitizenModel = button.Button(resolution[0]/2-160, resolution[1]/2-20, pygame.image.load(subtractTexturePath).convert_alpha(), 1)
+
 
 #images storage
 moneyModel = button.Button(20, 20, pygame.image.load(moneyTexturePath).convert_alpha(), 0.7)
@@ -99,9 +112,16 @@ while running:
 
     ####################################################################
     #update storage
-    game.calculateGains(dT)
+    returnChain = game.calculateGains(dT)
 
-    if not game.upgradeMenuIsUnlocked:
+    for i in returnChain:
+        if i == "lostPopulation":
+            initialTimeLostPopulation = time.time()
+            game.displayWarning = True
+            warningSurf = giantFont.render("Citizens RAN AWAY", True, "red", "black")
+
+
+    if game.displayCity:
         #draw buildings and check clicks
         if th.model.draw(screen):
             th.onClick("TH")
@@ -113,7 +133,7 @@ while running:
             quarry.onClick("quarry")
 
     #downmenu
-    if game.downMenuIsUnlocked:
+    if game.displayDownMenu:
         #lvl and name
         screen.blit(infoLvlSurf,(resolution[0]/2 - 80 - infoLvlSurf.get_width() // 2, resolution[1] - 120 - infoLvlSurf.get_height() // 2))
         screen.blit(buildingNameSurf,(resolution[0]/2 - buildingNameSurf.get_width() // 2, resolution[1] - 140 - buildingNameSurf.get_height() // 2))
@@ -125,7 +145,7 @@ while running:
             game.upgradePressed()
     
     #if upgrade menu has toggled to true
-    if game.upgradeMenuIsUnlocked and not game.prevUpgradeMenuIsUnlocked:
+    if game.displayUpgradeMenu and not game.prevDisplayUpgradeMenu:
         #crate the texts for prices
         textMenuSurfs=[]
         for item in game.materialList:
@@ -133,7 +153,7 @@ while running:
                 textMenuSurfs.append(font.render("You need " + str(values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"][item])+" of "+ item, True, "black"))
 
     #upgrade menu
-    if game.upgradeMenuIsUnlocked:
+    if game.displayUpgradeMenu:
         #background
         pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/4, resolution[1]/4, (resolution[0]/4)*2, (resolution[1]/4)*2), border_radius=50)
         #display texts
@@ -147,19 +167,21 @@ while running:
             #affordable?
             if game.upgradeConfirmed():
                 game.deactivateDownMenu()
-                game.upgradeMenuIsUnlocked=False
+                game.displayUpgradeMenu=False
                 game.whatIsSelected = ""
+                game.displayCity=True
             else:
                 textMenuSurfs=[font.render("Not affordable", True, "black")]
         elif cancelUpgradeModel.draw(screen):
-            game.upgradeMenuIsUnlocked=False
+            game.displayUpgradeMenu=False
+            game.displayCity=True
     
-    game.prevUpgradeMenuIsUnlocked = game.upgradeMenuIsUnlocked
+    game.prevDisplayUpgradeMenu = game.displayUpgradeMenu
 
     #storage side menu
-    if game.storageMenuIsUnlocked:
+    if game.displayStorageMenu:
         #background
-        pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 150, 350), border_radius=5)
+        pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 170, 350), border_radius=5)
         #images
         moneyModel.draw(screen)
         woodModel.draw(screen)
@@ -169,10 +191,86 @@ while running:
         #display values
         i=0
         for item in game.materialList:
-            storageSurfs[item] = font.render(str(round(game.storage[item])), True, "black")
+            if item in game.materialToBuilding:
+                storageSurfs[item] = fontSmall.render(str(round(game.storage[item])) + " - " + str(values["incomes"][game.materialToBuilding[item]][game.lvlStates[game.materialToBuilding[item]]]["income"]) + "/s", True, "black")
+            else:
+                storageSurfs[item] = fontSmall.render(str(round(game.storage[item])), True, "black")
             screen.blit(storageSurfs[item],(80,30+i))
             i+=90
     
+    if game.displayPopulationMenu:
+        pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-100, 10, 200, 120), border_radius=5)
+
+        textMenuSurfsPopulationMenu=[]
+        textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + " Citizens", True, "black"))
+        
+        line="Cost: "
+        for item in game.materialList:
+            if item in values["citizens"]["costSecond"]:
+                line+=str(str(values["citizens"]["costSecond"][item]*game.population) + " " + item + "/s ")
+        textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
+
+        line="Income: "
+        for item in game.materialList:
+            if item in values["citizens"]["income"]:
+                line+=str(str(values["citizens"]["income"][item]*game.population) + " " + item + "/s ")
+        textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
+        
+        i=0
+        for surf in textMenuSurfsPopulationMenu:
+            screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, 30+i - surf.get_height() // 2))
+            i+=35
+
+    if game.displayTHInfoMenu:
+        #crate the texts for prices
+        if not game.notAffordableShown:
+            textMenuSurfs=[]
+            line="The cost per citizen is "
+            for item in game.materialList:
+                if item in values["citizens"]["costSecond"]:
+                    line+=str(str(values["citizens"]["costSecond"][item])+" " + item + "/s ")
+            textMenuSurfs.append(font.render(line, True, "black"))
+
+            line="Each new citizen costs "
+            for item in game.materialList:
+                if item in values["citizens"]["costNew"]:
+                    line+=str(str(values["citizens"]["costNew"][item])+" of " + item + " ")
+            line+="NO REFUNDS"
+            textMenuSurfs.append(font.render(line, True, "black"))
+
+        #background
+        pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/4, (resolution[0]/5)*3, (resolution[1]/4)*2), border_radius=50)
+
+        if addCitizenModel.draw(screen):
+            if game.calculateAffordable(values["citizens"]["costNew"]):
+                game.payPrice(values["citizens"]["costNew"])
+                game.population+=1
+            else:
+                textMenuSurfs=[font.render("Not affordable", True, "black")]
+                game.notAffordableShown = True
+
+            
+        if subtractCitizenModel.draw(screen):
+            if game.population>0:
+                game.population-=1
+
+        if cancelTHInfoModel.draw(screen):
+            game.displayTHInfoMenu=False
+            game.displayCity=True
+            game.notAffordableShown = False
+            print("AAAa")
+        
+        #display texts
+        i=0
+        for surf in textMenuSurfs:
+            screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
+            i+=35
+
+    if game.displayWarning:
+        if time.time() - initialTimeLostPopulation < 2:
+            screen.blit(warningSurf,(resolution[0]/2 - warningSurf.get_width() // 2, resolution[1]/2 - warningSurf.get_height() // 2))
+        else:
+            game.displayWarning=False
 
     ####################################################################
 
@@ -181,6 +279,6 @@ while running:
 
     #dT + limit fps
     dT = clock.tick(30)/1000  # limits FPS to 60
-    print(f"FPS: {round(clock.get_fps(), 1)}")
+    #print(f"FPS: {round(clock.get_fps(), 1)}")
 
 pygame.quit()

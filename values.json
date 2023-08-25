@@ -133,11 +133,11 @@
             },
             {
                 "lvl":1,
-                "income":1
+                "income":5
             },
             {
                 "lvl":2,
-                "income":5
+                "income":25
             }
         ],
         "quarry": [
@@ -167,6 +167,19 @@
             "forest": 0,
             "farm": 0,
             "quarry": 0
+        },
+        "population": 0
+    },
+    "citizens": {
+        "price": 1,
+        "costSecond": {
+            "food": 2
+        },
+        "costNew": {
+            "money": 10
+        },
+        "income": {
+            "money": 1
         }
     }
 }
