@@ -1,0 +1,172 @@
+{
+    "prices": {
+        "TH": [
+            {
+                "lvl":0,
+                "price": {}
+            },
+            {
+                "lvl":1,
+                "price": {}
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 10
+                }
+            },
+            {
+                "lvl":3,
+                "price": {
+                    "money": 100,
+                    "wood": 10,
+                    "food": 10,
+                    "stone": 10
+                }
+            },
+            {
+                "lvl":3,
+                "price": {
+                    "money": 9999,
+                    "wood": 9999
+                }
+            }
+        ],
+        "forest": [
+            {
+                "lvl":0,
+                "price": {}
+            },
+            {
+                "lvl":1,
+                "price": {
+                    "money": 1
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 5,
+                    "wood": 10
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 9999,
+                    "wood": 9999
+                }
+            }
+        ],
+        "farm": [
+            {
+                "lvl":0,
+                "price": {}
+            },
+            {
+                "lvl":1,
+                "price": {
+                    "money": 1
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 5,
+                    "food": 10
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 9999,
+                    "food": 9999
+                }
+            }
+        ],
+        "quarry": [
+            {
+                "lvl":0,
+                "price": {}
+            },
+            {
+                "lvl":1,
+                "price": {
+                    "money": 1
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 5,
+                    "stone": 10
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 9999,
+                    "stone": 9999
+                }
+            }
+        ]
+    },
+    "incomes": {
+        "forest": [
+            {
+                "lvl":0,
+                "income":0
+            },
+            {
+                "lvl":1,
+                "income":1
+            },
+            {
+                "lvl":2,
+                "income":5
+            }
+        ],
+        "farm": [
+            {
+                "lvl":0,
+                "income":0
+            },
+            {
+                "lvl":1,
+                "income":1
+            },
+            {
+                "lvl":2,
+                "income":5
+            }
+        ],
+        "quarry": [
+            {
+                "lvl":0,
+                "income":0
+            },
+            {
+                "lvl":1,
+                "income":1
+            },
+            {
+                "lvl":2,
+                "income":5
+            }
+        ]
+    },
+    "initialValues":{
+        "storage":{
+            "money": 100,
+            "wood": 0,
+            "food": 0,
+            "stone": 0
+        },
+        "lvls":{
+            "TH": 1,
+            "forest": 0,
+            "farm": 0,
+            "quarry": 0
+        }
+    }
+}
