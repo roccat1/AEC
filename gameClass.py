@@ -7,6 +7,10 @@ with open("values.json", "r") as f:
 class Game:
     def __init__(self):
         global values
+
+        self.active=True
+        self.updating=True
+
         #default gameState variables
         self.displayDownMenu=False
         self.prevDisplayDownMenu=False
@@ -18,6 +22,8 @@ class Game:
         self.displayTHInfoMenu = False
         self.displayCity = True
         self.displayWarning = False
+        self.displayBuildingInfoMenu=False
+        self.displayUpgradeMeaningTHMenu=False
 
         self.whatIsSelected = ""
 
@@ -32,6 +38,17 @@ class Game:
         }
         self.storage = values["initialValues"]["storage"]
         self.population = values["initialValues"]["population"]
+        self.occupiedPopulation = 0
+        self.populationOccupation = {
+            "forest": 0,
+            "farm": 0,
+            "quarry": 0
+        }
+        self.realGains = {
+            "wood": 0,
+            "food": 0,
+            "stone": 0
+        }
 
         #initial lvls
         self.lvlStates = values["initialValues"]["lvls"]
@@ -60,14 +77,16 @@ class Game:
 
     #toggles upgrade menu
     def upgradePressed(self):
-        #upgrade th
-
-        #self.displayUpgradeMenu = not self.displayUpgradeMenu
+        self.displayBuildingInfoMenu=False
+        self.displayTHInfoMenu=False
         if self.displayUpgradeMenu:
             self.displayUpgradeMenu=False
             self.displayCity=True
         else:
-            self.displayUpgradeMenu=True
+            if self.whatIsSelected=="TH":
+                self.displayUpgradeMeaningTHMenu=True
+            else:
+                self.displayUpgradeMenu=True
             self.displayCity=False
 
     #True if it paid and False if not affordable
@@ -80,33 +99,41 @@ class Game:
             return False
 
     def infoPressed(self):
+        self.displayUpgradeMenu=False
+        self.displayUpgradeMeaningTHMenu=False
         if self.whatIsSelected=="TH":
             self.displayCity=False
             self.displayTHInfoMenu=True
-            
+        else:
+            self.displayCity=False
+            self.displayBuildingInfoMenu=True
 
+    def calculateGains(self, dT): 
+        initialStorage={}
+        for item in self.materialList:
+            initialStorage[item]=self.storage[item]
 
-    def calculateGains(self, dT):
-        returnChain=[]
+        #costSecond population
         for item in self.materialList:
-            if item in values["citizens"]["income"]:
-                self.storage[item]=round(self.storage[item]+dT*values["citizens"]["income"][item]*self.population,3)
-        
-        for item in self.materialList:
-            if item in values["citizens"]["costSecond"]:
-                if self.storage[item]-dT*values["citizens"]["costSecond"][item]*self.population <0:
-                    self.population-=1
-                    returnChain.append("lostPopulation")
+            if item in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                if self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1)<0:
+                    self.updating=False
+                    return ""
                 else:
-                    self.storage[item]=round(self.storage[item]-dT*values["citizens"]["costSecond"][item]*self.population,3)
+                    self.storage[item]=round(self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1),3)
 
-        #wood+=forest
-        self.storage["wood"]=round(self.storage["wood"]+dT*values["incomes"]["forest"][self.lvlStates["forest"]]["income"],3)
-
+        #wood+=forest*dT*workingPeople
+        
+        self.storage["wood"]=round(self.storage["wood"]+dT*values["stats"]["forest"][self.lvlStates["forest"]]["income"]*self.populationOccupation["forest"],3)
+        
         #food += farm
-        self.storage["food"]=round(self.storage["food"]+dT*values["incomes"]["farm"][self.lvlStates["farm"]]["income"],3)
+        self.storage["food"]=round(self.storage["food"]+dT*values["stats"]["farm"][self.lvlStates["farm"]]["income"]*self.populationOccupation["farm"],3)
 
         # stone += quarry
-        self.storage["stone"]=round(self.storage["stone"]+dT*values["incomes"]["quarry"][self.lvlStates["quarry"]]["income"],3)
+        self.storage["stone"]=round(self.storage["stone"]+dT*values["stats"]["quarry"][self.lvlStates["quarry"]]["income"]*self.populationOccupation["quarry"],3)
 
-        return returnChain
+        delta=0
+        for item in self.materialList:
+            if dT>0:
+                delta=round((self.storage[item]-initialStorage[item])/dT)
+            self.realGains[item]=delta

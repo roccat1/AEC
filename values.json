@@ -143,59 +143,89 @@
             }
         ]
     },
-    "incomes": {
+    "stats": {
         "forest": [
             {
                 "lvl":0,
-                "income":0
+                "income":0,
+                "populationCapacity": 0
             },
             {
                 "lvl":1,
-                "income":1
+                "income":3,
+                "populationCapacity": 2
             },
             {
                 "lvl":2,
-                "income":5
+                "income":10,
+                "populationCapacity": 5
             },
             {
                 "lvl":3,
-                "income":50
+                "income":50,
+                "populationCapacity": 25
             }
         ],
         "farm": [
             {
                 "lvl":0,
-                "income":0
+                "income":0,
+                "populationCapacity": 0
             },
             {
                 "lvl":1,
-                "income":5
+                "income":5,
+                "populationCapacity": 2
             },
             {
                 "lvl":2,
-                "income":25
+                "income":25,
+                "populationCapacity": 5
             },
             {
                 "lvl":3,
-                "income":50
+                "income":50,
+                "populationCapacity": 25
             }
         ],
         "quarry": [
             {
                 "lvl":0,
-                "income":0
+                "income":0,
+                "populationCapacity": 0
             },
             {
                 "lvl":1,
-                "income":1
+                "income":3,
+                "populationCapacity": 2
             },
             {
                 "lvl":2,
-                "income":5
+                "income":10,
+                "populationCapacity": 5
             },
             {
                 "lvl":3,
-                "income":50
+                "income":50,
+                "populationCapacity": 25
+            }
+        ],
+        "TH": [
+            {
+                "lvl":0,
+                "populationCapacity": 0
+            },
+            {
+                "lvl":1,
+                "populationCapacity": 3
+            },
+            {
+                "lvl":2,
+                "populationCapacity": 10
+            },
+            {
+                "lvl":3,
+                "populationCapacity": 50
             }
         ]
     },
@@ -212,18 +242,33 @@
             "farm": 0,
             "quarry": 0
         },
-        "population": 0
+        "population": 1
     },
     "citizens": {
         "price": 1,
-        "costSecond": {
-            "food": 2
-        },
+        "costSecond": [
+            {
+                "lvl": 0
+            },
+            {
+                "lvl": 1,
+                "food": 1
+            },
+            {
+                "lvl": 2,
+                "food": 2,
+                "stone": 1,
+                "wood": 1
+            },
+            {
+                "lvl": 3,
+                "food": 10,
+                "stone": 5,
+                "wood": 5
+            }
+        ],
         "costNew": {
             "money": 10
-        },
-        "income": {
-            "money": 1
         }
     }
 }
