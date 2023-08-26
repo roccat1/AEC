@@ -18,6 +18,8 @@ resolution=[1280,720]
 screen = pygame.display.set_mode((resolution[0], resolution[1]))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Afers Exteriors Capitalitzats (AEC)')
+pygame_icon = pygame.image.load(iconTexturePath)
+pygame.display.set_icon(pygame_icon)
 running = True
 giantFont = pygame.font.SysFont("Arial", 100)
 font = pygame.font.SysFont("Arial", 36)
@@ -44,10 +46,10 @@ textMenuSurfs = []
 
 #Creacio de models
 #buildings
-thModel = button.Button(resolution[0]/2-40, resolution[1]/2-40, pygame.image.load(thTexturePath).convert_alpha(), 1)
-forestModel = button.Button(resolution[0]/2-140, resolution[1]/2-40, pygame.image.load(forestTexturePath).convert_alpha(), 1)
-farmModel = button.Button(resolution[0]/2-40, resolution[1]/2-140, pygame.image.load(farmTexturePath).convert_alpha(), 1)
-quarryModel = button.Button(resolution[0]/2+60, resolution[1]/2-40, pygame.image.load(quarryTexturePath).convert_alpha(), 1)
+thModel = button.Button(resolution[0]/2-40, resolution[1]/2-40, pygame.image.load(thGenericTexturePath + str(values["initialValues"]["lvls"]["TH"]) + ".png").convert_alpha(), 1)
+forestModel = button.Button(resolution[0]/2-140, resolution[1]/2-40, pygame.image.load(forestGenericTexturePath + str(values["initialValues"]["lvls"]["forest"]) + ".png").convert_alpha(), 1)
+farmModel = button.Button(resolution[0]/2-40, resolution[1]/2-140, pygame.image.load(farmGenericTexturePath + str(values["initialValues"]["lvls"]["farm"]) + ".png").convert_alpha(), 1)
+quarryModel = button.Button(resolution[0]/2+60, resolution[1]/2-40, pygame.image.load(quarryGenericTexturePath + str(values["initialValues"]["lvls"]["quarry"]) + ".png").convert_alpha(), 1)
 
 #buttons
 infoModel = button.Button(resolution[0]/2+40, resolution[1]-100, pygame.image.load(infoTexturePath).convert_alpha(), 1)
@@ -89,10 +91,12 @@ class Building:
             infoLvlSurf = font.render("", True, "white")
             
 #models to full object instances
-th = Building(thModel)
-forest = Building(forestModel)
-farm = Building(farmModel)
-quarry = Building(quarryModel)
+buildings = {
+    "TH": Building(thModel),
+    "forest": Building(forestModel),
+    "farm": Building(farmModel),
+    "quarry": Building(quarryModel)
+}
 
 def updateInfoLvlLabel():
     global infoLvlSurf, game
@@ -123,14 +127,14 @@ while running:
 
     if game.displayCity:
         #draw buildings and check clicks
-        if th.model.draw(screen):
-            th.onClick("TH")
-        if forest.model.draw(screen):
-            forest.onClick("forest")
-        if farm.model.draw(screen):
-            farm.onClick("farm")
-        if quarry.model.draw(screen):
-            quarry.onClick("quarry")
+        if buildings["TH"].model.draw(screen):
+            buildings["TH"].onClick("TH")
+        if buildings["forest"].model.draw(screen):
+            buildings["forest"].onClick("forest")
+        if buildings["farm"].model.draw(screen):
+            buildings["farm"].onClick("farm")
+        if buildings["quarry"].model.draw(screen):
+            buildings["quarry"].onClick("quarry")
 
     #downmenu
     if game.displayDownMenu:
@@ -166,6 +170,7 @@ while running:
         if confirmUpgradeModel.draw(screen):
             #affordable?
             if game.upgradeConfirmed():
+                buildings[game.whatIsSelected].model.image=pygame.image.load(buildingsGenericTexturePath + game.whatIsSelected + "/" + str(game.lvlStates[game.whatIsSelected]) + ".png")
                 game.deactivateDownMenu()
                 game.displayUpgradeMenu=False
                 game.whatIsSelected = ""

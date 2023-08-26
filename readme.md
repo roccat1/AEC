@@ -6,10 +6,9 @@ https://github.com/roccat1/AEC
 
 
 ## To do
-- ~persones que gasten recursos en el th a canvi de diners, s'han de comprar i si no dones prou van marxant
-- velocitat guanys
+- persones per edifici funcionar
+- pausa si falten recursos basics
 - edificis refinadors
-- imatges millorar
 - prestecs
 
 # Chuleta github

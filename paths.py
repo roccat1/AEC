@@ -1,8 +1,11 @@
+iconTexturePath="assets/icon.ico"
+
 #Buildings
-thTexturePath = "assets/textures/buildings/th/TH.png"
-forestTexturePath = "assets/textures/buildings/forest/forest.png"
-farmTexturePath = "assets/textures/buildings/farm/farm.png"
-quarryTexturePath = "assets/textures/buildings/quarry/quarry.png"
+buildingsGenericTexturePath = "assets/textures/buildings/"
+thGenericTexturePath = "assets/textures/buildings/TH/"
+forestGenericTexturePath = "assets/textures/buildings/forest/"
+farmGenericTexturePath = "assets/textures/buildings/farm/"
+quarryGenericTexturePath = "assets/textures/buildings/quarry/"
 
 #storage
 moneyTexturePath="assets/textures/storage/money.png"

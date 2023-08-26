@@ -25,10 +25,21 @@
                 }
             },
             {
-                "lvl":3,
+                "lvl":4,
                 "price": {
-                    "money": 9999,
-                    "wood": 9999
+                    "money": 100,
+                    "wood": 100,
+                    "food": 100,
+                    "stone": 100
+                }
+            },
+            {
+                "lvl":5,
+                "price": {
+                    "money": 1000,
+                    "wood": 1000,
+                    "food": 1000,
+                    "stone": 1000
                 }
             }
         ],
@@ -51,7 +62,14 @@
                 }
             },
             {
-                "lvl":2,
+                "lvl":3,
+                "price": {
+                    "money": 100,
+                    "wood": 100
+                }
+            },
+            {
+                "lvl":4,
                 "price": {
                     "money": 9999,
                     "wood": 9999
@@ -77,7 +95,14 @@
                 }
             },
             {
-                "lvl":2,
+                "lvl":3,
+                "price": {
+                    "money": 100,
+                    "food": 100
+                }
+            },
+            {
+                "lvl":4,
                 "price": {
                     "money": 9999,
                     "food": 9999
@@ -103,7 +128,14 @@
                 }
             },
             {
-                "lvl":2,
+                "lvl":3,
+                "price": {
+                    "money": 100,
+                    "stone": 100
+                }
+            },
+            {
+                "lvl":4,
                 "price": {
                     "money": 9999,
                     "stone": 9999
@@ -124,6 +156,10 @@
             {
                 "lvl":2,
                 "income":5
+            },
+            {
+                "lvl":3,
+                "income":50
             }
         ],
         "farm": [
@@ -138,6 +174,10 @@
             {
                 "lvl":2,
                 "income":25
+            },
+            {
+                "lvl":3,
+                "income":50
             }
         ],
         "quarry": [
@@ -152,12 +192,16 @@
             {
                 "lvl":2,
                 "income":5
+            },
+            {
+                "lvl":3,
+                "income":50
             }
         ]
     },
     "initialValues":{
         "storage":{
-            "money": 100,
+            "money": 100000,
             "wood": 0,
             "food": 0,
             "stone": 0
