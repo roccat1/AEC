@@ -2,7 +2,8 @@
 Afers Exteriors Capitalitzats
 https://github.com/roccat1/AEC
 
-![Screenshot_2](https://github.com/roccat1/AEC/assets/58339860/6ae14881-d3da-4188-873d-4ba04764a5cd)
+![game_view_V 0 3](https://github.com/roccat1/AEC/assets/58339860/1f9209a9-cf64-422b-8888-4d4e520e2edf)
+
 
 # Changelog this version
 poblacio activa en la producció, 
