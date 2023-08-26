@@ -1,7 +1,6 @@
 # AEC
-Afers Exteriors Capitalitzats
-https://github.com/roccat1/AEC
-Download: https://github.com/roccat1/AEC/releases/tag/V.0.3
+- Afers Exteriors Capitalitzats : https://github.com/roccat1/AEC
+- Download: https://github.com/roccat1/AEC/releases/tag/V.0.3
 
 ![game_view_V 0 3](https://github.com/roccat1/AEC/assets/58339860/d2ee18f1-3c7a-4ba8-a76e-5f3bdd8de535)
 
