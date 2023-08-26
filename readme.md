@@ -2,7 +2,7 @@
 Afers Exteriors Capitalitzats
 https://github.com/roccat1/AEC
 
-![game_view_V 0 3](https://github.com/roccat1/AEC/assets/58339860/1f9209a9-cf64-422b-8888-4d4e520e2edf)
+![game_view_V 0 3](https://github.com/roccat1/AEC/assets/58339860/d2ee18f1-3c7a-4ba8-a76e-5f3bdd8de535)
 
 # Funcionament
 
