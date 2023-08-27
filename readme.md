@@ -26,6 +26,7 @@ change version.json
 ## Abans de la release
 - Mercat interior (+$)
 - balance
+- Downgradable TH
 ## Futur
 - prestecs
 - edificis refinadors
