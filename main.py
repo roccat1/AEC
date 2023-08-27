@@ -9,8 +9,10 @@ import button
 import gameClass
 
 #import values
-with open("values.json", "r") as f:
+with open(valuesJsonPath, "r") as f:
     values= json.load(f)
+with open(versionJsonPath, "r") as f:
+    version= json.load(f)
 
 # pygame setup
 pygame.init()
@@ -136,6 +138,7 @@ while running:
 
                     '''
 
+        #buildings
         if game.displayCity:
             #draw buildings and check clicks
             if buildings["TH"].model.draw(screen):
@@ -146,6 +149,163 @@ while running:
                 buildings["farm"].onClick("farm")
             if buildings["quarry"].model.draw(screen):
                 buildings["quarry"].onClick("quarry")
+        else:
+            #upgrade menu
+            if game.displayUpgradeMenu:
+                textMenuSurfs=[]
+                for item in game.materialList:
+                    if item in values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"]:
+                        textMenuSurfs.append(font.render("You need " + str(values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"][item])+" of "+ item, True, "black"))
+                #background
+                pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/4, resolution[1]/4, (resolution[0]/4)*2, (resolution[1]/4)*2), border_radius=50)
+                #display texts
+                i=0
+                for surf in textMenuSurfs:
+                    screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
+                    i+=35
+
+                #confirm or cancel
+                if confirmUpgradeModel.draw(screen):
+                    #affordable?
+                    if game.upgradeConfirmed():
+                        buildings[game.whatIsSelected].model.image=pygame.image.load(buildingsGenericTexturePath + game.whatIsSelected + "/" + str(game.lvlStates[game.whatIsSelected]) + ".png")
+                        game.deactivateDownMenu()
+                        game.displayUpgradeMenu=False
+                        game.whatIsSelected = ""
+                        game.displayCity=True
+                    else:
+                        textMenuSurfs=[font.render("Not affordable", True, "black")]
+                elif cancelUpgradeModel.draw(screen):
+                    game.displayUpgradeMenu=False
+                    game.displayCity=True
+
+            #first upgrade menu th
+            if game.displayUpgradeMeaningTHMenu:
+                #crate the texts for prices
+                textMenuSurfs=[font.render(f'capacity: {values["stats"]["TH"][(game.lvlStates["TH"])]["populationCapacity"]} -> {values["stats"]["TH"][(game.lvlStates["TH"])+1]["populationCapacity"]} citizens costing each per sec: ', True, "black")]
+                for item in game.materialList:
+                    if item in values["citizens"]["costSecond"][game.lvlStates["TH"]+1]:
+                        textMenuSurfs.append(font.render(str(values["citizens"]["costSecond"][game.lvlStates["TH"]+1][item])+" of "+ item, True, "black"))
+
+                #background
+                pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/4, resolution[1]/4, (resolution[0]/4)*2, (resolution[1]/4)*2), border_radius=50)
+                #display texts
+                i=0
+                for surf in textMenuSurfs:
+                    screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
+                    i+=35
+
+                #confirm or cancel
+                if confirmUpgradeModel.draw(screen):
+                    game.displayUpgradeMeaningTHMenu = False
+                    game.displayUpgradeMenu = True
+                elif cancelUpgradeModel.draw(screen):
+                    game.displayUpgradeMeaningTHMenu=False
+                    game.displayCity=True
+
+            #TH i
+            if game.displayTHInfoMenu:
+                #cost
+                if not game.notAffordableShown:
+                    textMenuSurfs=[]
+                    line="The cost per citizen is "
+                    for item in game.materialList:
+                        if item in values["citizens"]["costSecond"]:
+                            line+=str(str(values["citizens"]["costSecond"][item])+" " + item + "/s ")
+                    textMenuSurfs.append(font.render(line, True, "black"))
+
+                    line="Each new citizen costs "
+                    for item in game.materialList:
+                        if item in values["citizens"]["costNew"]:
+                            line+=str(str(values["citizens"]["costNew"][item])+" of " + item + " ")
+                    line+="NO REFUNDS"
+                    textMenuSurfs.append(font.render(line, True, "black"))
+
+                #background
+                pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/4, (resolution[0]/5)*3, (resolution[1]/4)*2), border_radius=50)
+
+                #+
+                if addCitizenModel.draw(screen):
+                    if game.calculateAffordable(values["citizens"]["costNew"]):
+                        if game.population<values["stats"]["TH"][(game.lvlStates["TH"])]["populationCapacity"]:
+                            game.payPrice(values["citizens"]["costNew"])
+                            game.population+=1
+                        else:
+                            textMenuSurfs=[font.render("Not enough capacity", True, "black")]
+                            game.notAffordableShown = True
+                    else:
+                        textMenuSurfs=[font.render("Not affordable", True, "black")]
+                        game.notAffordableShown = True
+
+                #-
+                if subtractCitizenModel.draw(screen):
+                    if game.population>1:
+                        if game.occupiedPopulation<game.population:
+                            game.population-=1
+                        else:
+                            textMenuSurfs=[font.render("You have all the citizens occupied", True, "black")]
+                            game.notAffordableShown = True
+                    else:
+                        textMenuSurfs=[font.render("You can't remove yourself", True, "black")]
+                        game.notAffordableShown = True
+
+                if cancelCenterInfoModel.draw(screen):
+                    game.displayTHInfoMenu=False
+                    game.displayCity=True
+                    game.notAffordableShown = False
+                
+                #display texts
+                i=0
+                for surf in textMenuSurfs:
+                    screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
+                    i+=35
+
+            #building i
+            if game.displayBuildingInfoMenu:
+                #crate the texts for prices
+                if not game.notAffordableShown:
+                    textMenuSurfs=[]
+                    line=f'Each citizen produces {str(values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["income"])}/s REFUNDABLE'
+                    textMenuSurfs.append(font.render(line, True, "black"))
+                    line=f'This building have {str(game.populationOccupation[game.whatIsSelected])} citizens'
+                    textMenuSurfs.append(font.render(line, True, "black"))
+                    line=f'Capacity: {str(values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["populationCapacity"])} citizens'
+                    textMenuSurfs.append(font.render(line, True, "black"))
+
+                #background
+                pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/4, (resolution[0]/5)*3, (resolution[1]/4)*2), border_radius=50)
+
+                if addCitizenModel.draw(screen):
+                    if game.population>game.occupiedPopulation:
+                        if values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["populationCapacity"]>game.populationOccupation[game.whatIsSelected]:
+                            game.occupiedPopulation+=1
+                            game.populationOccupation[game.whatIsSelected]+=1
+                        else:
+                            game.notAffordableShown = True
+                            textMenuSurfs=[]
+                            line='Not enough capacity'
+                            textMenuSurfs.append(font.render(line, True, "black"))
+                    else:
+                        game.notAffordableShown = True
+                        textMenuSurfs=[]
+                        line='Not affordable'
+                        textMenuSurfs.append(font.render(line, True, "black"))
+
+                if subtractCitizenModel.draw(screen):
+                    if game.populationOccupation[game.whatIsSelected]>0:
+                        game.populationOccupation[game.whatIsSelected]-=1
+                        game.occupiedPopulation-=1
+
+                if cancelCenterInfoModel.draw(screen):
+                    game.displayBuildingInfoMenu=False
+                    game.displayCity=True
+                    game.notAffordableShown = False
+                
+                #display texts
+                i=0
+                for surf in textMenuSurfs:
+                    screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
+                    i+=35
 
         #downmenu
         if game.displayDownMenu:
@@ -158,64 +318,6 @@ while running:
             #is upgrade pressed?
             if upgradeModel.draw(screen):
                 game.upgradePressed()
-        
-        #if upgrade menu has toggled to true
-        if game.displayUpgradeMenu and not game.prevDisplayUpgradeMenu:
-            #crate the texts for prices
-            textMenuSurfs=[]
-            for item in game.materialList:
-                if item in values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"]:
-                    textMenuSurfs.append(font.render("You need " + str(values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"][item])+" of "+ item, True, "black"))
-
-        #upgrade menu
-        if game.displayUpgradeMenu:
-            #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/4, resolution[1]/4, (resolution[0]/4)*2, (resolution[1]/4)*2), border_radius=50)
-            #display texts
-            i=0
-            for surf in textMenuSurfs:
-                screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
-                i+=35
-
-            #confirm or cancel
-            if confirmUpgradeModel.draw(screen):
-                #affordable?
-                if game.upgradeConfirmed():
-                    buildings[game.whatIsSelected].model.image=pygame.image.load(buildingsGenericTexturePath + game.whatIsSelected + "/" + str(game.lvlStates[game.whatIsSelected]) + ".png")
-                    game.deactivateDownMenu()
-                    game.displayUpgradeMenu=False
-                    game.whatIsSelected = ""
-                    game.displayCity=True
-                else:
-                    textMenuSurfs=[font.render("Not affordable", True, "black")]
-            elif cancelUpgradeModel.draw(screen):
-                game.displayUpgradeMenu=False
-                game.displayCity=True
-        
-        game.prevDisplayUpgradeMenu = game.displayUpgradeMenu
-
-        if game.displayUpgradeMeaningTHMenu:
-            #crate the texts for prices
-            textMenuSurfs=[font.render(f'capacity: {values["stats"]["TH"][(game.lvlStates["TH"])]["populationCapacity"]} -> {values["stats"]["TH"][(game.lvlStates["TH"])+1]["populationCapacity"]} citizens costing each per sec: ', True, "black")]
-            for item in game.materialList:
-                if item in values["citizens"]["costSecond"][game.lvlStates["TH"]+1]:
-                    textMenuSurfs.append(font.render(str(values["citizens"]["costSecond"][game.lvlStates["TH"]+1][item])+" of "+ item, True, "black"))
-
-            #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/4, resolution[1]/4, (resolution[0]/4)*2, (resolution[1]/4)*2), border_radius=50)
-            #display texts
-            i=0
-            for surf in textMenuSurfs:
-                screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
-                i+=35
-
-            #confirm or cancel
-            if confirmUpgradeModel.draw(screen):
-                game.displayUpgradeMeaningTHMenu = False
-                game.displayUpgradeMenu = True
-            elif cancelUpgradeModel.draw(screen):
-                game.displayUpgradeMeaningTHMenu=False
-                game.displayCity=True
 
         #storage side menu
         if game.displayStorageMenu:
@@ -234,143 +336,44 @@ while running:
                 screen.blit(storageSurfs[item],(80,30+i))
                 i+=90
         
+        #population
         if game.displayPopulationMenu:
+            #background
             pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-150, 10, 300, 120), border_radius=5)
 
+            #population
             textMenuSurfsPopulationMenu=[]
             textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + " Citizens", True, "black"))
             
+            #costSecond
             line="Cost: "
             for item in game.materialList:
                 if item in values["citizens"]["costSecond"][game.lvlStates["TH"]]:
                     line+=str(str(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1)) + " " + item + "/s ")
             textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
 
+            #occupied citizens
             line=f"You have {game.occupiedPopulation} occupied citizens"
             textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
             
+            #display
             i=0
             for surf in textMenuSurfsPopulationMenu:
                 screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, 30+i - surf.get_height() // 2))
                 i+=35
 
-        if game.displayTHInfoMenu:
-            #crate the texts for prices
-            if not game.notAffordableShown:
-                textMenuSurfs=[]
-                line="The cost per citizen is "
-                for item in game.materialList:
-                    if item in values["citizens"]["costSecond"]:
-                        line+=str(str(values["citizens"]["costSecond"][item])+" " + item + "/s ")
-                textMenuSurfs.append(font.render(line, True, "black"))
-
-                line="Each new citizen costs "
-                for item in game.materialList:
-                    if item in values["citizens"]["costNew"]:
-                        line+=str(str(values["citizens"]["costNew"][item])+" of " + item + " ")
-                line+="NO REFUNDS"
-                textMenuSurfs.append(font.render(line, True, "black"))
-
-            #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/4, (resolution[0]/5)*3, (resolution[1]/4)*2), border_radius=50)
-
-            if addCitizenModel.draw(screen):
-                if game.calculateAffordable(values["citizens"]["costNew"]):
-                    if game.population<values["stats"]["TH"][(game.lvlStates["TH"])]["populationCapacity"]:
-                        game.payPrice(values["citizens"]["costNew"])
-                        game.population+=1
-                    else:
-                        textMenuSurfs=[font.render("Not enough capacity", True, "black")]
-                        game.notAffordableShown = True
-                else:
-                    textMenuSurfs=[font.render("Not affordable", True, "black")]
-                    game.notAffordableShown = True
-
-                
-            if subtractCitizenModel.draw(screen):
-                if game.population>1:
-                    if game.occupiedPopulation<game.population:
-                        game.population-=1
-                    else:
-                        textMenuSurfs=[font.render("You have all the citizens occupied", True, "black")]
-                        game.notAffordableShown = True
-                else:
-                    textMenuSurfs=[font.render("You can't remove yourself", True, "black")]
-                    game.notAffordableShown = True
-
-            if cancelCenterInfoModel.draw(screen):
-                game.displayTHInfoMenu=False
-                game.displayCity=True
-                game.notAffordableShown = False
-            
-            #display texts
-            i=0
-            for surf in textMenuSurfs:
-                screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
-                i+=35
-
-        if game.displayBuildingInfoMenu:
-            #crate the texts for prices
-            if not game.notAffordableShown:
-                textMenuSurfs=[]
-                line=f'Each citizen produces {str(values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["income"])}/s REFUNDABLE'
-                textMenuSurfs.append(font.render(line, True, "black"))
-                line=f'This building have {str(game.populationOccupation[game.whatIsSelected])} citizens'
-                textMenuSurfs.append(font.render(line, True, "black"))
-                line=f'Capacity: {str(values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["populationCapacity"])} citizens'
-                textMenuSurfs.append(font.render(line, True, "black"))
-
-            #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/4, (resolution[0]/5)*3, (resolution[1]/4)*2), border_radius=50)
-
-            if addCitizenModel.draw(screen):
-                #affordable
-                if game.population>game.occupiedPopulation:
-                    if values["stats"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]]["populationCapacity"]>game.populationOccupation[game.whatIsSelected]:
-                        game.occupiedPopulation+=1
-                        game.populationOccupation[game.whatIsSelected]+=1
-                    else:
-                        game.notAffordableShown = True
-                        textMenuSurfs=[]
-                        line='Not enough capacity'
-                        textMenuSurfs.append(font.render(line, True, "black"))
-                else:
-                    game.notAffordableShown = True
-                    textMenuSurfs=[]
-                    line='Not affordable'
-                    textMenuSurfs.append(font.render(line, True, "black"))
-
-            if subtractCitizenModel.draw(screen):
-                if game.populationOccupation[game.whatIsSelected]>0:
-                    game.populationOccupation[game.whatIsSelected]-=1
-                    game.occupiedPopulation-=1
-
-            if cancelCenterInfoModel.draw(screen):
-                game.displayBuildingInfoMenu=False
-                game.displayCity=True
-                game.notAffordableShown = False
-            
-            #display texts
-            i=0
-            for surf in textMenuSurfs:
-                screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - 120 + i - surf.get_height() // 2))
-                i+=35
-        '''
-        if game.displayWarning:
-            if time.time() - initialTimeLostPopulation < 2:
-                screen.blit(warningSurf,(resolution[0]/2 - warningSurf.get_width() // 2, resolution[1]/2 - warningSurf.get_height() // 2))
-            else:
-                game.displayWarning=False
-        '''
         if not game.updating:
             surf=font.render("SEMIPAUSE (F1) if doesn't work your citizens cant survive, solve it (check Δ to be +)", True, "black")
             screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, 200 - surf.get_height() // 2))
 
         ####################################################################
     
+    #pausemenu
     else:
         surf=giantFont.render("PAUSE", True, "black")
         screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/2 - surf.get_height() // 2))
+        surf=fontSmall.render(version["version"], True, "black")
+        screen.blit(surf,(resolution[0] - 3 - surf.get_width(), resolution[1] - surf.get_height()))
 
     # flip() the display to put your work on screen
     pygame.display.flip()

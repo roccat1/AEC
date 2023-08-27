@@ -1,7 +1,7 @@
 from paths import *
 import json
 
-with open("values.json", "r") as f:
+with open(valuesJsonPath, "r") as f:
     values= json.load(f)
 
 class Game:
@@ -13,9 +13,7 @@ class Game:
 
         #default gameState variables
         self.displayDownMenu=False
-        self.prevDisplayDownMenu=False
         self.displayUpgradeMenu=False
-        self.prevDisplayUpgradeMenu=False
 
         self.displayStorageMenu = True
         self.displayPopulationMenu = True

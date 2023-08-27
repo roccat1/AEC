@@ -9,14 +9,17 @@
 Tens una poblacio, un ets tu i no consumeixes res, els altres consumeixen recursos/s. Per tal de generar recursos basics (wood, food, stone) has de millorar els edificis i posar persones a treballar-hi
 
 # Versions
-- V.0.0.X - Alpha
-- V.0.X   - Beta
-- D.X     - Unbalanced release
-- V.X     - Balanced release
+- v0.0.X - Alpha
+- v0.X   - Beta
+- dX     - Unbalanced release
+- vX     - Balanced release
+- vX_d   - In development
 ______________________________________
-- V.X.x.x - base change
-- V.x.X.x - New mechanics/expansion/major change
-- V.x.x.X - minor changes/bug fix
+- vX.x.x - base change
+- vx.X.x - New mechanics/expansion/major change
+- vx.x.X - minor changes/bug fix
+______________________________________
+change version.json
 
 # To do
 ## NOW

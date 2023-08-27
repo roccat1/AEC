@@ -24,3 +24,6 @@ infoLockedTexturePath = "assets/textures/menus/down_menu/info/info_locked.png"
 ##upgrade
 upgradeTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade.png"
 upgradeLockedTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade_locked.png"
+
+valuesJsonPath = "configs/values.json"
+versionJsonPath = "configs/version.json"
