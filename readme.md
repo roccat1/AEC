@@ -23,6 +23,7 @@ change version.json
 
 # To do
 ## NOW
+abrebiar cost population
 ## Abans de la release
 - Mercat interior (+$)
 - balance
