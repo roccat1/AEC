@@ -47,6 +47,12 @@ class Game:
             "food": 0,
             "stone": 0
         }
+        self.abbreviate = {
+            "money": "$",
+            "wood": "wo",
+            "food": "fo",
+            "stone": "st"
+        }
 
         #initial lvls
         self.lvlStates = values["initialValues"]["lvls"]

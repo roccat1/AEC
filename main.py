@@ -1,7 +1,8 @@
 #Afers Exteriors Capitalitzats
 
 #Llibreries
-import pygame, json, time
+import pygame, json
+from decimal import Decimal
 
 #arxius
 from paths import *
@@ -25,7 +26,7 @@ pygame.display.set_icon(pygame_icon)
 running = True
 giantFont = pygame.font.SysFont("Arial", 100)
 font = pygame.font.SysFont("Arial", 36)
-fontSmall = pygame.font.SysFont("Arial", 26)
+fontSmall = pygame.font.SysFont("Arial", 21)
 dT=0
 
 game = gameClass.Game()
@@ -67,9 +68,9 @@ subtractCitizenModel = button.Button(resolution[0]/2-160, resolution[1]/2-20, py
 
 #images storage
 moneyModel = button.Button(20, 20, pygame.image.load(moneyTexturePath).convert_alpha(), 0.7)
-woodModel = button.Button(20, 110, pygame.image.load(woodTexturePath).convert_alpha(), 0.7)
-foodModel = button.Button(20, 200, pygame.image.load(foodTexturePath).convert_alpha(), 0.7)
-stoneModel = button.Button(20, 290, pygame.image.load(stoneTexturePath).convert_alpha(), 0.7)
+woodModel = button.Button(20, 100, pygame.image.load(woodTexturePath).convert_alpha(), 0.7)
+foodModel = button.Button(20, 180, pygame.image.load(foodTexturePath).convert_alpha(), 0.7)
+stoneModel = button.Button(20, 260, pygame.image.load(stoneTexturePath).convert_alpha(), 0.7)
 
 class Building:
     def __init__(self, model):
@@ -104,6 +105,33 @@ def updateInfoLvlLabel():
     global infoLvlSurf, game
 
     infoLvlSurf = font.render(str(game.lvlStates[game.whatIsSelected]), True, "white")
+
+def menu(type, actionSet):
+    global game
+    #create texts
+    textMenuSurfs=[font.render("aqui", True, "black")]
+    #background
+    pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/5, resolution[1]/5 - 20, (resolution[0]/5)*3, 430), border_radius=25)
+    #display texts
+    i=0
+    for surf in textMenuSurfs:
+        screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/5 + 20 + i - surf.get_height() // 2))
+        i+=35
+
+    #confirm or cancel
+    if confirmUpgradeModel.draw(screen):
+        #affordable?
+        if game.upgradeConfirmed():
+            buildings[game.whatIsSelected].model.image=pygame.image.load(buildingsGenericTexturePath + game.whatIsSelected + "/" + str(game.lvlStates[game.whatIsSelected]) + ".png")
+            game.deactivateDownMenu()
+            game.displayUpgradeMenu=False
+            game.whatIsSelected = ""
+            game.displayCity=True
+        else:
+            textMenuSurfs=[font.render("Not affordable", True, "black")]
+    elif cancelUpgradeModel.draw(screen):
+        game.displayUpgradeMenu=False
+        game.displayCity=True
 
 #Main loop
 while running:
@@ -322,7 +350,7 @@ while running:
         #storage side menu
         if game.displayStorageMenu:
             #background
-            pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 200, 400), border_radius=5)
+            pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 180, 350), border_radius=5)
             #images
             moneyModel.draw(screen)
             woodModel.draw(screen)
@@ -330,30 +358,31 @@ while running:
             stoneModel.draw(screen)
 
             #display values
-            i=0
+            i=6
             for item in game.materialList:
-                storageSurfs[item] = fontSmall.render(str(round(game.storage[item])) + " Δ " + str(game.realGains[item]) + "/s", True, "black")
-                screen.blit(storageSurfs[item],(80,30+i))
-                i+=90
+                storageSurfs[item]=[]
+                storageSurfs[item].append(fontSmall.render(('%.3E' % Decimal(game.storage[item])).replace('+', '')+" "+game.abbreviate[item], True, "black"))
+                storageSurfs[item].append(fontSmall.render("Δ" + ('%.1E' % Decimal(game.realGains[item])).replace('+', '') +" "+ game.abbreviate[item]+"/s", True, "black"))
+                y=0
+                for surf in storageSurfs[item]:
+                    screen.blit(surf,(80,20+i+y))
+                    y+=20
+                i+=80
         
         #population
         if game.displayPopulationMenu:
             #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-150, 10, 300, 120), border_radius=5)
+            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-100, 10, 200, 80), border_radius=5)
 
             #population
             textMenuSurfsPopulationMenu=[]
-            textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + " Citizens", True, "black"))
+            textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + f" Citizens ({game.occupiedPopulation} occupied)", True, "black"))
             
             #costSecond
             line="Cost: "
             for item in game.materialList:
                 if item in values["citizens"]["costSecond"][game.lvlStates["TH"]]:
                     line+=str(str(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1)) + " " + item + "/s ")
-            textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
-
-            #occupied citizens
-            line=f"You have {game.occupiedPopulation} occupied citizens"
             textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
             
             #display
@@ -376,6 +405,7 @@ while running:
         screen.blit(surf,(resolution[0] - 3 - surf.get_width(), resolution[1] - surf.get_height()))
 
     # flip() the display to put your work on screen
+    menu("abduscan","2")
     pygame.display.flip()
 
     #dT + limit fps
