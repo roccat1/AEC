@@ -231,7 +231,7 @@
     },
     "initialValues":{
         "storage":{
-            "money": 100000,
+            "money": 1000000,
             "wood": 0,
             "food": 0,
             "stone": 0

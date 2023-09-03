@@ -13,15 +13,17 @@ class Game:
 
         #default gameState variables
         self.displayDownMenu=False
-        self.displayUpgradeMenu=False
-
         self.displayStorageMenu = True
         self.displayPopulationMenu = True
-        self.displayTHInfoMenu = False
         self.displayCity = True
         self.displayWarning = False
-        self.displayBuildingInfoMenu=False
-        self.displayUpgradeMeaningTHMenu=False
+        '''
+        THInfo
+        buildingInfo
+        upgradeMeaningTH
+        upgrade
+        '''
+        self.activeMenu=None
 
         self.whatIsSelected = ""
 
@@ -46,6 +48,12 @@ class Game:
             "wood": 0,
             "food": 0,
             "stone": 0
+        }
+        self.abbreviate = {
+            "money": "$",
+            "wood": "WO",
+            "food": "FO",
+            "stone": "ST"
         }
 
         #initial lvls
@@ -75,16 +83,14 @@ class Game:
 
     #toggles upgrade menu
     def upgradePressed(self):
-        self.displayBuildingInfoMenu=False
-        self.displayTHInfoMenu=False
-        if self.displayUpgradeMenu:
-            self.displayUpgradeMenu=False
+        if self.activeMenu=="upgrade":
+            self.activeMenu=None
             self.displayCity=True
         else:
             if self.whatIsSelected=="TH":
-                self.displayUpgradeMeaningTHMenu=True
+                self.activeMenu="upgradeMeaningTH"
             else:
-                self.displayUpgradeMenu=True
+                self.activeMenu="upgrade"
             self.displayCity=False
 
     #True if it paid and False if not affordable
@@ -97,14 +103,12 @@ class Game:
             return False
 
     def infoPressed(self):
-        self.displayUpgradeMenu=False
-        self.displayUpgradeMeaningTHMenu=False
         if self.whatIsSelected=="TH":
             self.displayCity=False
-            self.displayTHInfoMenu=True
+            self.activeMenu="THInfo"
         else:
             self.displayCity=False
-            self.displayBuildingInfoMenu=True
+            self.activeMenu="buildingInfo"
 
     def calculateGains(self, dT): 
         initialStorage={}
