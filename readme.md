@@ -26,7 +26,7 @@ change version.json
 - info menu
 - upgrade menu say what changes
 ## Abans de la release
-- Mercat interior (+$)
+- Mercat interior (+$) (money update)
 - balance
 - Downgradable TH
 - Repassar menus
