@@ -81,18 +81,6 @@ class Game:
             if item in price:
                 self.storage[item] -= price[item]
 
-    #toggles upgrade menu
-    def upgradePressed(self):
-        if self.activeMenu=="upgrade":
-            self.activeMenu=None
-            self.displayCity=True
-        else:
-            if self.whatIsSelected=="TH":
-                self.activeMenu="upgradeMeaningTH"
-            else:
-                self.activeMenu="upgrade"
-            self.displayCity=False
-
     #True if it paid and False if not affordable
     def upgradeConfirmed(self):
         if self.calculateAffordable(values["prices"][self.whatIsSelected][self.lvlStates[self.whatIsSelected]+1]["price"]):
@@ -101,14 +89,6 @@ class Game:
             return True
         else:
             return False
-
-    def infoPressed(self):
-        if self.whatIsSelected=="TH":
-            self.displayCity=False
-            self.activeMenu="THInfo"
-        else:
-            self.displayCity=False
-            self.activeMenu="buildingInfo"
 
     def calculateGains(self, dT): 
         initialStorage={}

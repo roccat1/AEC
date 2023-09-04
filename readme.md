@@ -23,17 +23,22 @@ change version.json
 
 # To do
 ## NOW
-abrebiar cost population
+- info menu
+- upgrade menu say what changes
 ## Abans de la release
 - Mercat interior (+$)
 - balance
 - Downgradable TH
+- Repassar menus
+- Save file
 ## Futur
 - prestecs
 - edificis refinadors
+- Menu pausa amb config
+    - config.json
 ## Detalls
 - produccio/edifici/segon
-- menus perfectes
+- Repassar menus
 
 # Chuleta github
 git status

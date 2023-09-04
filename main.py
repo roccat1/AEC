@@ -31,6 +31,7 @@ dT=0
 
 game = gameClass.Game()
 
+#usage: reNumberer(game.storage[item])+game.abbreviate[item]
 def reNumberer(num):
     for unit in ['','K','M']:
         if abs(num) < 1000.0:
@@ -41,11 +42,6 @@ def reNumberer(num):
 class Models:
     def __init__(self):
         global game
-        self.buildingNameSurf = font.render(game.whatIsSelected, True, "white")
-        self.infoLvlSurf = font.render("", True, "white")
-
-        self.populationSurf = fontSmall.render(str(game.population), True, "black")
-        self.warningSurf = giantFont.render("Warning", True, "red")
 
         self.storageSurfs = {
             "money": fontSmall.render(str(round(game.storage["money"])), True, "black"),
@@ -62,8 +58,9 @@ class Models:
         self.quarryModel = button.Button(resolution[0]/2+60, resolution[1]/2-40, pygame.image.load(quarryGenericTexturePath + str(values["initialValues"]["lvls"]["quarry"]) + ".png").convert_alpha(), 1)
 
         #buttons
-        self.infoModel = button.Button(resolution[0]/2+40, resolution[1]-100, pygame.image.load(infoTexturePath).convert_alpha(), 1)
-        self.upgradeModel = button.Button(resolution[0]/2-120, resolution[1]-100, pygame.image.load(upgradeTexturePath).convert_alpha(), 1)
+        self.infoModel = button.Button(resolution[0]/2-40, resolution[1]-100, pygame.image.load(infoTexturePath).convert_alpha(), 1)
+        self.upgradeModel = button.Button(resolution[0]/2-160, resolution[1]-100, pygame.image.load(upgradeTexturePath).convert_alpha(), 1)
+        self.populationModel = button.Button(resolution[0]/2+80, resolution[1]-100, pygame.image.load(populationTexturePath).convert_alpha(), 1)
         #=
         self.confirmUpgradeModel = button.Button(resolution[0]/2+80, resolution[1]/2+80, pygame.image.load(acceptTexturePath).convert_alpha(), 1)
         self.cancelUpgradeModel = button.Button(resolution[0]/2-160, resolution[1]/2+80, pygame.image.load(cancelTexturePath).convert_alpha(), 1)
@@ -85,22 +82,20 @@ class Building:
     def __init__(self, model):
         self.model = model
     def onClick(self, name):
-        global game, buildingNameSurf, infoLvlSurf
+        global game, models
         #if is a new selection
         if game.whatIsSelected != name:
             #change internal and external selection name
             game.whatIsSelected = name
 
             #change surfaces and activateDownMenu()
-            buildingNameSurf = font.render(game.activateDownMenu(), True, "white")
-            updateInfoLvlLabel()
+            game.activateDownMenu()
 
         #if is a deselection do it reverse
         else:
             game.whatIsSelected = ""
 
-            buildingNameSurf = font.render(game.deactivateDownMenu(), True, "white")
-            infoLvlSurf = font.render("", True, "white")
+            game.deactivateDownMenu()
             
 #models to full object instances
 buildings = {
@@ -110,10 +105,6 @@ buildings = {
     "quarry": Building(models.quarryModel)
 }
 textMenuSurfs=[]
-def updateInfoLvlLabel():
-    global infoLvlSurf, game
-
-    infoLvlSurf = font.render(str(game.lvlStates[game.whatIsSelected]), True, "white")
 
 def displayMenu():
     global game, models, textMenuSurfs
@@ -122,23 +113,27 @@ def displayMenu():
     #different menus
     #upgrade menu
     if game.activeMenu=="upgrade":
-        textMenuSurfs=[]
-        for item in game.materialList:
-            if item in values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"]:
-                textMenuSurfs.append(font.render("You need " + str(values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"][item])+" of "+ item, True, "black"))
+        if not game.notAffordableShown:
+            textMenuSurfs=[]
+            for item in game.materialList:
+                if item in values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"]:
+                    textMenuSurfs.append(font.render("You need " + str(values["prices"][game.whatIsSelected][game.lvlStates[game.whatIsSelected]+1]["price"][item])+" of "+ item, True, "black"))
         
         #confirm or cancel
         if models.confirmUpgradeModel.draw(screen):
             #affordable?
             if game.upgradeConfirmed():
+                game.notAffordableShown=False
                 buildings[game.whatIsSelected].model.image=pygame.image.load(buildingsGenericTexturePath + game.whatIsSelected + "/" + str(game.lvlStates[game.whatIsSelected]) + ".png")
                 game.deactivateDownMenu()
                 game.activeMenu=None
                 game.whatIsSelected = ""
                 game.displayCity=True
             else:
+                game.notAffordableShown=True
                 textMenuSurfs=[font.render("Not affordable", True, "black")]
         elif models.cancelUpgradeModel.draw(screen):
+            game.notAffordableShown=False
             game.activeMenu=None
             game.displayCity=True
     #first upgrade menu th
@@ -162,8 +157,8 @@ def displayMenu():
             textMenuSurfs=[]
             line="The cost per citizen is "
             for item in game.materialList:
-                if item in values["citizens"]["costSecond"]:
-                    line+=str(str(values["citizens"]["costSecond"][item])+" " + item + "/s ")
+                if item in values["citizens"]["costSecond"][game.lvlStates["TH"]]:
+                    line+=str(str(values["citizens"]["costSecond"][game.lvlStates["TH"]][item])+" " + game.abbreviate[item] + "/s ")
             textMenuSurfs.append(font.render(line, True, "black"))
 
             line="Each new citizen costs "
@@ -284,14 +279,29 @@ while running:
         #downmenu
         if game.displayDownMenu:
             #lvl and name
-            screen.blit(infoLvlSurf,(resolution[0]/2 - 80 - infoLvlSurf.get_width() // 2, resolution[1] - 120 - infoLvlSurf.get_height() // 2))
-            screen.blit(buildingNameSurf,(resolution[0]/2 - buildingNameSurf.get_width() // 2, resolution[1] - 140 - buildingNameSurf.get_height() // 2))
+            surf=font.render(f"{game.whatIsSelected} (lvl {game.lvlStates[game.whatIsSelected]})", True, "white")
+            screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1] - 140 - surf.get_height() // 2))
             #is info pressed?
             if models.infoModel.draw(screen):
-                game.infoPressed()
+                pass
             #is upgrade pressed?
             if models.upgradeModel.draw(screen):
-                game.upgradePressed()
+                if game.activeMenu=="upgrade":
+                    game.activeMenu=None
+                    game.displayCity=True
+                else:
+                    if game.whatIsSelected=="TH":
+                        game.activeMenu="upgradeMeaningTH"
+                    else:
+                        game.activeMenu="upgrade"
+                    game.displayCity=False
+            if models.populationModel.draw(screen):
+                if game.whatIsSelected=="TH":
+                    game.displayCity=False
+                    game.activeMenu="THInfo"
+                else:
+                    game.displayCity=False
+                    game.activeMenu="buildingInfo"
 
         #storage side menu
         if game.displayStorageMenu:
@@ -330,17 +340,17 @@ while running:
         #population
         if game.displayPopulationMenu:
             #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-100, 10, 200, 80), border_radius=5)
+            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-200, 10, 400, 80), border_radius=5)
 
             #population
             textMenuSurfsPopulationMenu=[]
             textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + f" Citizens ({game.occupiedPopulation} occupied)", True, "black"))
             
             #costSecond
-            line="Cost: "
+            line="Cost:"
             for item in game.materialList:
                 if item in values["citizens"]["costSecond"][game.lvlStates["TH"]]:
-                    line+=str(str(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1)) + " " + item + "/s ")
+                    line+=reNumberer(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1))+game.abbreviate[item] + "/s"
             textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
             
             #display
