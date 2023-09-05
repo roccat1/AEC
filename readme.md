@@ -24,7 +24,7 @@ change version.json
 # To do
 ## NOW
 - [ ] info menu text
-- [ ] Mercat interior (+$) (money update)
+- [x] Mercat interior (+$) (money update)
 - [ ] balance
 - [ ] Repassar menus
 - [ ] Save file
