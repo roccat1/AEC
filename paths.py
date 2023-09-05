@@ -6,6 +6,7 @@ thGenericTexturePath = "assets/textures/buildings/TH/"
 forestGenericTexturePath = "assets/textures/buildings/forest/"
 farmGenericTexturePath = "assets/textures/buildings/farm/"
 quarryGenericTexturePath = "assets/textures/buildings/quarry/"
+internalMarketGenericTexturePath = "assets/textures/buildings/internalMarket/"
 
 #storage
 moneyTexturePath="assets/textures/storage/money.png"
@@ -18,6 +19,9 @@ acceptTexturePath = "assets/textures/menus/accept.png"
 cancelTexturePath = "assets/textures/menus/cancel.png"
 addTexturePath = "assets/textures/menus/add.png"
 subtractTexturePath = "assets/textures/menus/subtract.png"
+populationTexturePath="assets/textures/menus/down_menu/population.png"
+downgradeTexturePath = "assets/textures/menus/down_menu/downgrade.png"
+enterBuildingTexturePath = "assets/textures/menus/down_menu/enterBuilding.png"
 ##info
 infoTexturePath = "assets/textures/menus/down_menu/info/info.png"
 infoLockedTexturePath = "assets/textures/menus/down_menu/info/info_locked.png"
@@ -25,7 +29,11 @@ infoLockedTexturePath = "assets/textures/menus/down_menu/info/info_locked.png"
 upgradeTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade.png"
 upgradeLockedTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade_locked.png"
 
-populationTexturePath="assets/textures/menus/down_menu/population.png"
-
+#configs
 valuesJsonPath = "configs/values.json"
 versionJsonPath = "configs/version.json"
+configJsonPath = "configs/config.json"
+##langs
+langsJsonPath={
+    "EN": "configs/langs/EN.json"
+}

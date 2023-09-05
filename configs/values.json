@@ -141,6 +141,39 @@
                     "stone": 9999
                 }
             }
+        ],
+        "internalMarket": [
+            {
+                "lvl":0,
+                "price": {}
+            },
+            {
+                "lvl":1,
+                "price": {
+                    "money": 10
+                }
+            },
+            {
+                "lvl":2,
+                "price": {
+                    "money": 50,
+                    "stone": 100
+                }
+            },
+            {
+                "lvl":3,
+                "price": {
+                    "money": 100,
+                    "stone": 100
+                }
+            },
+            {
+                "lvl":4,
+                "price": {
+                    "money": 9999,
+                    "stone": 9999
+                }
+            }
         ]
     },
     "stats": {
@@ -174,7 +207,7 @@
             },
             {
                 "lvl":1,
-                "income":50000000,
+                "income":5,
                 "populationCapacity": 2
             },
             {
@@ -238,9 +271,10 @@
         },
         "lvls":{
             "TH": 1,
-            "forest": 0,
-            "farm": 0,
-            "quarry": 0
+            "forest": 1,
+            "farm": 1,
+            "quarry": 1,
+            "internalMarket": 0
         },
         "population": 1
     },

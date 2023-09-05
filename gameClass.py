@@ -18,23 +18,39 @@ class Game:
         self.displayCity = True
         self.displayWarning = False
         '''
-        THInfo
-        buildingInfo
+        populationTH
+        populationInfo
         upgradeMeaningTH
         upgrade
+        info
+        downgrade
+        internalMarket
         '''
         self.activeMenu=None
 
-        self.whatIsSelected = ""
+        '''
+        TH
+        farm
+        quarry
+        forest
+        internalMarket
+        '''
+        self.selectedBuilding = ""
 
         self.notAffordableShown=False
 
         #initial values
         self.materialList = ["money", "wood", "food", "stone"]
+        self.primaryMaterialsList = ["wood", "food", "stone"]
         self.materialToBuilding={
             "wood": "forest",
             "food": "farm",
             "stone": "quarry"
+        }
+        self.buildingToMaterial={
+            "forest": "wood",
+            "farm": "food",
+            "quarry": "stone"
         }
         self.storage = values["initialValues"]["storage"]
         self.population = values["initialValues"]["population"]
@@ -61,7 +77,7 @@ class Game:
 
     def activateDownMenu(self):
         self.displayDownMenu = True
-        return self.whatIsSelected
+        return self.selectedBuilding
 
     def deactivateDownMenu(self):
         self.displayDownMenu = False
@@ -83,12 +99,20 @@ class Game:
 
     #True if it paid and False if not affordable
     def upgradeConfirmed(self):
-        if self.calculateAffordable(values["prices"][self.whatIsSelected][self.lvlStates[self.whatIsSelected]+1]["price"]):
-            self.payPrice(values["prices"][self.whatIsSelected][self.lvlStates[self.whatIsSelected]+1]["price"])
-            self.lvlStates[self.whatIsSelected]+=1
+        if self.calculateAffordable(values["prices"][self.selectedBuilding][self.lvlStates[self.selectedBuilding]+1]["price"]):
+            self.payPrice(values["prices"][self.selectedBuilding][self.lvlStates[self.selectedBuilding]+1]["price"])
+            self.lvlStates[self.selectedBuilding]+=1
             return True
         else:
             return False
+
+    def calcNextInstantMaterial(self, material, dT):
+        if material=="wood": 
+            return round(self.storage["wood"]+dT*values["stats"]["forest"][self.lvlStates["forest"]]["income"]*self.populationOccupation["forest"],3)
+        elif material=="food":
+            return round(self.storage["food"]+dT*values["stats"]["farm"][self.lvlStates["farm"]]["income"]*self.populationOccupation["farm"],3)
+        elif material=="stone":
+            return round(self.storage["stone"]+dT*values["stats"]["quarry"][self.lvlStates["quarry"]]["income"]*self.populationOccupation["quarry"],3)
 
     def calculateGains(self, dT): 
         initialStorage={}
@@ -98,21 +122,17 @@ class Game:
         #costSecond population
         for item in self.materialList:
             if item in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
-                if self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1)<0:
+                if self.calcNextInstantMaterial(item, dT)-(dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1))<0:
                     self.updating=False
                     return ""
-                else:
-                    self.storage[item]=round(self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1),3)
+        for item in self.materialList:
+            if item in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                self.storage[item]=round(self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1),3)
 
         #wood+=forest*dT*workingPeople
         
-        self.storage["wood"]=round(self.storage["wood"]+dT*values["stats"]["forest"][self.lvlStates["forest"]]["income"]*self.populationOccupation["forest"],3)
-        
-        #food += farm
-        self.storage["food"]=round(self.storage["food"]+dT*values["stats"]["farm"][self.lvlStates["farm"]]["income"]*self.populationOccupation["farm"],3)
-
-        # stone += quarry
-        self.storage["stone"]=round(self.storage["stone"]+dT*values["stats"]["quarry"][self.lvlStates["quarry"]]["income"]*self.populationOccupation["quarry"],3)
+        for item in self.primaryMaterialsList:
+            self.storage[item]=self.calcNextInstantMaterial(item, dT)
 
         delta=0
         for item in self.materialList:

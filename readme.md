@@ -23,22 +23,22 @@ change version.json
 
 # To do
 ## NOW
-- info menu
-- upgrade menu say what changes
-## Abans de la release
-- Mercat interior (+$) (money update)
-- balance
-- Downgradable TH
-- Repassar menus
-- Save file
+- [ ] info menu text
+- [ ] Mercat interior (+$) (money update)
+- [ ] balance
+- [ ] Repassar menus
+- [ ] Save file
+- [ ] Tots menus tanquen en tornar a clickar
 ## Futur
-- prestecs
-- edificis refinadors
-- Menu pausa amb config
-    - config.json
+- [ ] prestecs
+- [ ] edificis refinadors
+- [ ] Traduccions
+- [ ] Log file
+- [ ] Menu pausa amb config
+    - [ ] config.json
 ## Detalls
-- produccio/edifici/segon
-- Repassar menus
+- [ ] produccio/edifici/segon en info
+- [ ] Repassar menus
 
 # Chuleta github
 git status

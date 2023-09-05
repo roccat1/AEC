@@ -1,0 +1,24 @@
+{
+    "infoMenusTexts": {
+        "TH": [
+            "temp",
+            "2"
+        ],
+        "forest": [
+            "temp",
+            "2"
+        ],
+        "farm": [
+            "temp",
+            "2"
+        ],
+        "quarry": [
+            "temp",
+            "2"
+        ],
+        "internalMarket": [
+            "temp",
+            "2"
+        ]
+    }
+}
