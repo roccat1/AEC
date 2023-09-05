@@ -19,7 +19,7 @@ ______________________________________
 - vx.X.x - New mechanics/expansion/major change
 - vx.x.X - minor changes/bug fix
 ______________________________________
-change version.json
+change version.json, foto amb downmenu!!!!!!!
 
 # To do
 ## NOW
