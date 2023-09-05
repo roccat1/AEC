@@ -30,6 +30,7 @@ change version.json
 - [ ] Save file
 - [ ] Tots menus tanquen en tornar a clickar
 - [ ] Cost adding sells at internal market
+- [ ] Girar +- internal market
 ## Futur
 - [ ] prestecs
 - [ ] edificis refinadors
