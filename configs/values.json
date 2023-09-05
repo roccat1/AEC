@@ -264,7 +264,7 @@
     },
     "initialValues":{
         "storage":{
-            "money": 1000000,
+            "money": 100,
             "wood": 0,
             "food": 0,
             "stone": 0
@@ -274,9 +274,14 @@
             "forest": 1,
             "farm": 1,
             "quarry": 1,
-            "internalMarket": 0
+            "internalMarket": 1
         },
-        "population": 1
+        "population": 1,
+        "internalMarketConfig": {
+            "wood": 0,
+            "food": 0,
+            "stone": 0
+        }
     },
     "citizens": {
         "price": 1,
@@ -304,5 +309,10 @@
         "costNew": {
             "money": 10
         }
+    },
+    "internalMarket": {
+        "food": 1,
+        "stone": 0.25,
+        "wood": 0.5
     }
 }

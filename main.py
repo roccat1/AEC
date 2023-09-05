@@ -43,6 +43,36 @@ def reNumberer(num):
         num /= 1000.0
     return f"{num:6.2f}B"
 
+class ItemInternalMarket:
+    def __init__(self, item):
+        global game
+        self.item=item
+        self.surf2=None
+        self.line=f'{item}({values["internalMarket"][item]}$/{game.abbreviate[item]}): {game.internalMarketConfig[self.item]}{game.abbreviate[item]}/s -> {game.internalMarketConfig[self.item]*values["internalMarket"][item]}$/s'
+        self.surf=font.render(self.line, True, "black")
+        self.addSellingItemModel = button.Button(resolution[0]/2, resolution[1]/2, pygame.image.load(addTexturePath).convert_alpha(), 0.5)
+        self.subtractSellingItemModel = button.Button(resolution[0]/2, resolution[1]/2, pygame.image.load(subtractTexturePath).convert_alpha(), 0.5)
+    
+    def addSellingItemPressed(self):
+        global game
+        game.internalMarketConfig[self.item]+=1
+
+    def subtractSellingItemPressed(self):
+        global game
+        if game.internalMarketConfig[self.item]>0:
+            game.internalMarketConfig[self.item]-=1
+    
+    def updateRow(self):
+        global game
+        self.line=f'{self.item}({values["internalMarket"][self.item]}$/{game.abbreviate[self.item]}):'
+        self.surf=font.render(self.line, True, "black")
+        self.line2=f'{game.internalMarketConfig[self.item]}{game.abbreviate[self.item]}/s -> {round(game.internalMarketConfig[self.item]*values["internalMarket"][self.item], 7)}$/s'
+        self.surf2=font.render(self.line2, True, "black")
+
+rowsInternalMarket=[]
+for item in game.primaryMaterialsList:
+    rowsInternalMarket.append(ItemInternalMarket(item))
+
 class Models:
     def __init__(self):
         global game
@@ -278,13 +308,40 @@ def displayMenu():
             game.activeMenu=None
             game.displayCity=True
     elif game.activeMenu=="internalMarket":
-        textMenuSurfs=[font.render(f"Do you want to downgrade {game.selectedBuilding} {game.lvlStates[game.selectedBuilding]} -> {game.lvlStates[game.selectedBuilding]-1}", True, "black")]
+        textMenuSurfs=[]
+        textMenuSurfs2=[]
+        
+        y=0
+        for row in rowsInternalMarket:
+            row.updateRow()
+            textMenuSurfs.append(row.surf)
+            textMenuSurfs2.append(row.surf2)
+            #row.addSellingItemModel.rect.topleft=(0,0)
+            row.addSellingItemModel.rect.topleft=(resolution[0]/2 + 250, resolution[1]/5 + 10 + y - row.surf.get_height() // 2)
+            row.subtractSellingItemModel.rect.topleft=(resolution[0]/2 + 300, resolution[1]/5 + 10 + y - row.surf.get_height() // 2)
+            if row.addSellingItemModel.draw(screen):
+                row.addSellingItemPressed()
+            if row.subtractSellingItemModel.draw(screen):
+                row.subtractSellingItemPressed()
+            y+=50
 
-
-        if models.cancelUpgradeModel.draw(screen):
+        if models.cancelCenterInfoModel.draw(screen):
             game.notAffordableShown=False
             game.activeMenu=None
             game.displayCity=True
+        
+        offset=50
+        i=0
+        for surf in textMenuSurfs:
+            screen.blit(surf,(resolution[0]/5+10, resolution[1]/5 + 10 + i - surf.get_height() // 2))
+            i+=offset
+        offset=50
+        i=0
+        for surf in textMenuSurfs2:
+            screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/5 + 10 + i - surf.get_height() // 2))
+            i+=offset
+
+        return ""
     #ERROR notification
     else:
         #crate the texts for prices
@@ -297,10 +354,11 @@ def displayMenu():
             game.displayCity=True
 
     #display texts
+    offset=35
     i=0
     for surf in textMenuSurfs:
         screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1]/5 + 10 + i - surf.get_height() // 2))
-        i+=35
+        i+=offset
 
 #Main loop
 while running:
@@ -376,13 +434,14 @@ while running:
                         game.displayCity=False
                         game.activeMenu="populationBuilding"
             else:
-                if models.enterBuildingModel.draw(screen):
-                    if game.activeMenu=="internalMarket":
-                        game.activeMenu=None
-                        game.displayCity=True
-                    else:
-                        game.activeMenu="internalMarket"
-                        game.displayCity=False
+                if game.lvlStates["internalMarket"]>0:
+                    if models.enterBuildingModel.draw(screen):
+                        if game.activeMenu=="internalMarket":
+                            game.activeMenu=None
+                            game.displayCity=True
+                        else:
+                            game.activeMenu="internalMarket"
+                            game.displayCity=False
             if game.selectedBuilding=="TH":
                 if models.downgradeModel.draw(screen):
                     if game.activeMenu=="downgrade":
@@ -448,7 +507,7 @@ while running:
                 i+=35
 
         if not game.updating:
-            surf=font.render("SEMIPAUSE (F1) if doesn't work your citizens cant survive, solve it (check Δ to be +)", True, "black")
+            surf=font.render("SEMIPAUSE (F1) if doesn't work your citizens cant survive, solve it (check Δ to be +)", True, "black",)
             screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, 200 - surf.get_height() // 2))
 
         ####################################################################

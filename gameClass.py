@@ -72,6 +72,8 @@ class Game:
             "stone": "ST"
         }
 
+        self.internalMarketConfig=values["initialValues"]["internalMarketConfig"]
+
         #initial lvls
         self.lvlStates = values["initialValues"]["lvls"]
 
@@ -107,12 +109,55 @@ class Game:
             return False
 
     def calcNextInstantMaterial(self, material, dT):
+        #wood+=forest*dT*workingPeople
         if material=="wood": 
-            return round(self.storage["wood"]+dT*values["stats"]["forest"][self.lvlStates["forest"]]["income"]*self.populationOccupation["forest"],3)
+            result = (self.storage["wood"]
+                         #income from generator
+                         +dT*values["stats"]["forest"][self.lvlStates["forest"]]["income"]*self.populationOccupation["forest"]
+                         #selling in internal market
+                         -dT*self.internalMarketConfig[material]
+                         )
+            #pay population if necessary
+            if material in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                result-=dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][material]*(self.population-1)
+
+            return result
+        
         elif material=="food":
-            return round(self.storage["food"]+dT*values["stats"]["farm"][self.lvlStates["farm"]]["income"]*self.populationOccupation["farm"],3)
+            result = (self.storage["food"]
+                         #income from generator
+                         +dT*values["stats"]["farm"][self.lvlStates["farm"]]["income"]*self.populationOccupation["farm"]
+                         #selling in internal market
+                         -dT*self.internalMarketConfig[material]
+                         )
+            #pay population if necessary
+            if material in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                result-=dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][material]*(self.population-1)
+            
+            return result
+        
         elif material=="stone":
-            return round(self.storage["stone"]+dT*values["stats"]["quarry"][self.lvlStates["quarry"]]["income"]*self.populationOccupation["quarry"],3)
+            result = (self.storage["stone"]
+                         #income from generator
+                         +dT*values["stats"]["quarry"][self.lvlStates["quarry"]]["income"]*self.populationOccupation["quarry"]
+                         #selling in internal market
+                         -dT*self.internalMarketConfig[material])
+            #pay population if necessary
+            if material in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                result-=dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][material]*(self.population-1)
+            
+            return result
+        
+        elif material == "money":
+            result = self.storage["money"]
+            #internalMarket payments
+            for item in self.primaryMaterialsList:
+                result+=dT*values["internalMarket"][item]*self.internalMarketConfig[item]
+            #pay population if necessary
+            if material in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
+                result-=dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][material]*(self.population-1)
+            
+            return result
 
     def calculateGains(self, dT): 
         initialStorage={}
@@ -120,22 +165,16 @@ class Game:
             initialStorage[item]=self.storage[item]
 
         #costSecond population
+        #can afford the next instant?
         for item in self.materialList:
-            if item in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
-                if self.calcNextInstantMaterial(item, dT)-(dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1))<0:
+            if self.calcNextInstantMaterial(item, dT)<0:
                     self.updating=False
                     return ""
         for item in self.materialList:
-            if item in values["citizens"]["costSecond"][self.lvlStates["TH"]]:
-                self.storage[item]=round(self.storage[item]-dT*values["citizens"]["costSecond"][self.lvlStates["TH"]][item]*(self.population-1),3)
-
-        #wood+=forest*dT*workingPeople
-        
-        for item in self.primaryMaterialsList:
             self.storage[item]=self.calcNextInstantMaterial(item, dT)
 
         delta=0
         for item in self.materialList:
             if dT>0:
-                delta=round((self.storage[item]-initialStorage[item])/dT)
+                delta=(self.storage[item]-initialStorage[item])/dT
             self.realGains[item]=delta
