@@ -29,6 +29,11 @@ infoLockedTexturePath = "assets/textures/menus/down_menu/info/info_locked.png"
 upgradeTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade.png"
 upgradeLockedTexturePath = "assets/textures/menus/down_menu/upgrade/upgrade_locked.png"
 
+loadTexturePath = "assets/textures/menus/load.png"
+saveTexturePath = "assets/textures/menus/save.png"
+newSaveTexturePath = "assets/textures/menus/newSave.png"
+resumeTexturePath = "assets/textures/menus/resume.png"
+
 #configs
 valuesJsonPath = "configs/values.json"
 versionJsonPath = "configs/version.json"
@@ -37,3 +42,9 @@ configJsonPath = "configs/config.json"
 langsJsonPath={
     "EN": "configs/langs/EN.json"
 }
+
+#fonts
+arialFontPath="assets/fonts/arial.ttf"
+
+#save
+savePath="saves/save.pkl"

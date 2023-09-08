@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         global values
 
-        self.active=True
+        self.active=False
         self.updating=True
 
         #default gameState variables
@@ -159,22 +159,23 @@ class Game:
             
             return result
 
-    def calculateGains(self, dT): 
-        initialStorage={}
+    def calcDelta(self, material):
+        return self.calcNextInstantMaterial(material, 1)-self.storage[material]
+
+
+    def calculateGains(self, dT):
+        
         for item in self.materialList:
-            initialStorage[item]=self.storage[item]
+            self.realGains[item]=self.calcDelta(item)
 
         #costSecond population
         #can afford the next instant?
         for item in self.materialList:
             if self.calcNextInstantMaterial(item, dT)<0:
+                    #do if not affordable
                     self.updating=False
                     return ""
         for item in self.materialList:
             self.storage[item]=self.calcNextInstantMaterial(item, dT)
 
-        delta=0
-        for item in self.materialList:
-            if dT>0:
-                delta=(self.storage[item]-initialStorage[item])/dT
-            self.realGains[item]=delta
+        

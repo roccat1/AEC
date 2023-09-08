@@ -1,3 +1,5 @@
 {
-    "lang": "EN"
+    "lang": "EN",
+    "initialMenu": true,
+    "loadSaveOnStart": false
 }

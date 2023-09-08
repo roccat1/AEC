@@ -21,23 +21,27 @@ ______________________________________
 ______________________________________
 change version.json, foto amb downmenu!!!!!!!
 
-# To do
+# To do (Not released)
 ## NOW
-- [ ] info menu text
-- [x] Mercat interior (+$) (money update)
 - [ ] balance
 - [ ] Repassar menus
-- [ ] Save file
-- [ ] Tots menus tanquen en tornar a clickar
 - [ ] Cost adding sells at internal market
-- [ ] Girar +- internal market
+- [x] info menu text
+- [x] Save file (pickle, game i models)
+- [x] Tots menus tanquen en tornar a clickar
+- [x] Girar +- internal market
+- [x] Font en els fitxers del joc
+- [x] Calcular delta en pausa
 ## Futur
+- [ ] Si canvia funcionament edifici o algo a la info!!!!!
 - [ ] prestecs
 - [ ] edificis refinadors
 - [ ] Traduccions
+    - [ ] Accents
 - [ ] Log file
 - [ ] Menu pausa amb config
-    - [ ] config.json
+    - [x] config.json
+- [ ] llistes d'edificis no generadors, materials generats, ...
 ## Detalls
 - [ ] produccio/edifici/segon en info
 - [ ] Repassar menus
@@ -54,3 +58,10 @@ git commit <-m msg>
 git push
 
 https://bluuweb.github.io/tutorial-github/
+
+# Culeta pickle
+with open('save.pkl', 'rb') as f:
+    game = pickle.load(f)
+
+with open('save.pkl','wb') as f:
+    pickle.dump(game, f)

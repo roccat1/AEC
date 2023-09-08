@@ -1,24 +1,34 @@
 {
     "infoMenusTexts": {
         "TH": [
-            "temp",
-            "2"
+            "Edifici central, permet afegir nova gent a la",
+            "ciutat. Millorar aquest edifici implica que",
+            "els ciutadans gastaran mes recursos per segon",
+            "per ciutada, pero et permetra augmentar el limit",
+            "d'habitants"
         ],
         "forest": [
-            "temp",
-            "2"
+            "Genera fusta sempre que hi tingui ciutadans",
+            "treballant, generara mes recursos per segon",
+            "per ciutada al augmentar al nivell. Mes",
+            "ciutadans generen mes recursos"
         ],
         "farm": [
-            "temp",
-            "2"
+            "Genera menjar sempre que hi tingui ciutadans",
+            "treballant, generara mes recursos per segon",
+            "per ciutada al augmentar al nivell. Mes",
+            "ciutadans generen mes recursos"
         ],
         "quarry": [
-            "temp",
-            "2"
+            "Genera pedra sempre que hi tingui ciutadans",
+            "treballant, generara mes recursos per segon",
+            "per ciutada al augmentar al nivell. Mes",
+            "ciutadans generen mes recursos"
         ],
         "internalMarket": [
-            "temp",
-            "2"
+            "permet vendre els recursos de sobres a la",
+            "propia ciutat generant diners venent la",
+            "quantitat de recursos desitjada per segon"
         ]
     }
 }
