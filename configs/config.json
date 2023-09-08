@@ -1,5 +1,9 @@
 {
     "lang": "EN",
     "initialMenu": true,
-    "loadSaveOnStart": false
+    "loadSaveOnStart": false,
+    "FPS": {
+        "show": false,
+        "max": 30
+    }
 }

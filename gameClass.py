@@ -4,9 +4,15 @@ import json
 with open(valuesJsonPath, "r") as f:
     values= json.load(f)
 
+#version file
+with open(versionJsonPath, "r") as f:
+    version = json.load(f)
+
 class Game:
     def __init__(self):
         global values
+
+        self.version=version["version"]
 
         self.active=False
         self.updating=True

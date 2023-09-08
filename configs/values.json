@@ -313,6 +313,9 @@
     "internalMarket": {
         "food": 1,
         "stone": 0.25,
-        "wood": 0.5
+        "wood": 0.5,
+        "add": {
+            "stone": 20
+        }
     }
 }

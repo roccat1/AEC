@@ -28,7 +28,9 @@
         "internalMarket": [
             "permet vendre els recursos de sobres a la",
             "propia ciutat generant diners venent la",
-            "quantitat de recursos desitjada per segon"
+            "quantitat de recursos desitjada per segon.",
+            "Agumentar les ventes per segon te un cost,",
+            "reduir-les no"
         ]
     }
 }

@@ -8,24 +8,36 @@
 
 Tens una poblacio, un ets tu i no consumeixes res, els altres consumeixen recursos/s. Per tal de generar recursos basics (wood, food, stone) has de millorar els edificis i posar persones a treballar-hi
 
+# About
+
+Author: Roc Rodríguez Arumí
+Github: https://github.com/roccat1
+Email: roc.r2005@gmail.com
+
 # Versions
 - v0.0.X - Alpha
 - v0.X   - Beta
 - dX     - Unbalanced release
 - vX     - Balanced release
 - vX_d   - In development
+- vX_RC(v.Y) - Release candidate of Y based on X
+- vX_B(v.Y)  - Beta of Y based on X
 ______________________________________
 - vX.x.x - base change
 - vx.X.x - New mechanics/expansion/major change
 - vx.x.X - minor changes/bug fix
 ______________________________________
-change version.json, foto amb downmenu!!!!!!!
+change version.json, 
+foto amb downmenu!!!!!!!
+version save.pkl
 
 # To do (Not released)
 ## NOW
 - [ ] balance
 - [ ] Repassar menus
-- [ ] Cost adding sells at internal market
+- [x] Comentar TOT el codi
+- [x] click curt fa raro
+- [x] Cost adding sells at internal market
 - [x] info menu text
 - [x] Save file (pickle, game i models)
 - [x] Tots menus tanquen en tornar a clickar
@@ -33,6 +45,7 @@ change version.json, foto amb downmenu!!!!!!!
 - [x] Font en els fitxers del joc
 - [x] Calcular delta en pausa
 ## Futur
+- [ ] save file without pickle
 - [ ] Si canvia funcionament edifici o algo a la info!!!!!
 - [ ] prestecs
 - [ ] edificis refinadors
@@ -42,6 +55,7 @@ change version.json, foto amb downmenu!!!!!!!
 - [ ] Menu pausa amb config
     - [x] config.json
 - [ ] llistes d'edificis no generadors, materials generats, ...
+- [ ] Efectes de soroll
 ## Detalls
 - [ ] produccio/edifici/segon en info
 - [ ] Repassar menus
