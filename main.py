@@ -641,8 +641,8 @@ while running:
                 screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, 30+i - surf.get_height() // 2))
                 i+=35
 
+        #semipause
         if not game.updating:
-            #semipause
             surf=fontSmall.render("SEMIPAUSE (F1) if doesn't work your citizens cant survive, solve it (check Δ to be +)", True, "black",)
             screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, -120 + resolution[1] - surf.get_height() // 2))
             #update delta
