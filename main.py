@@ -10,10 +10,58 @@ ______________________________________
 import pygame, json, pickle, os, sys
 from decimal import Decimal
 
-#arxius
 from gameFiles.configs.paths import *
+#config file
+with open(configJsonPath, "r") as f:
+    config = json.load(f)
+resolution=[config["resolution"]["width"],config["resolution"]["height"]]
+
+# pygame setup
+pygame.init()
+screen = pygame.display.set_mode((resolution[0], resolution[1]))
+clock = pygame.time.Clock()
+pygame.display.set_caption('Afers Exteriors Capitalitzats (AEC)')
+pygame_icon = pygame.image.load(iconTexturePath)
+pygame.display.set_icon(pygame_icon)
+running = True
+
+
+#arxius
 import gameFiles.pyfiles.gameClass as gameClass
+game = gameClass.Game()
+from gameFiles.pyfiles.fonts import *
+from gameFiles.pyfiles.models import *
+models=Models()
+#class for each building
+class Building:
+    def __init__(self, model):
+        self.model = model
+    def onClick(self, name):
+        global game, models
+        #if is a new selection
+        if game.selectedBuilding != name:
+            #change internal and external selection name
+            game.selectedBuilding = name
+
+            game.displayDownMenu = True
+
+        #if is a deselection do it reverse
+        else:
+            game.selectedBuilding = ""
+
+            game.displayDownMenu = False
+#models to full object instances
+buildings = {
+    "TH": Building(models.thModel),
+    "forest": Building(models.forestModel),
+    "farm": Building(models.farmModel),
+    "quarry": Building(models.quarryModel),
+    "internalMarket": Building(models.internalMarketModel)
+}
+
 import gameFiles.pyfiles.button as button
+from gameFiles.pyfiles.clientFunctions import *
+log("")
 
 #values file
 with open(valuesJsonPath, "r") as f:
@@ -21,9 +69,6 @@ with open(valuesJsonPath, "r") as f:
 #version file
 with open(versionJsonPath, "r") as f:
     version = json.load(f)
-#config file
-with open(configJsonPath, "r") as f:
-    config = json.load(f)
 #selected language file
 with open(langsJsonPath[config["lang"]], "r") as f:
     texts = json.load(f)
@@ -32,74 +77,12 @@ mouseLPressed=False
 mouseLDown=False
 prevMouseLPressed=False
 initialMenu=config["initialMenu"]
+dT=0
 
 showFPS=config["FPS"]["show"]
 maxFPS=config["FPS"]["max"]
 
-# pygame setup
-pygame.init()
-resolution=[1280,720]
-screen = pygame.display.set_mode((resolution[0], resolution[1]))
-clock = pygame.time.Clock()
-pygame.display.set_caption('Afers Exteriors Capitalitzats (AEC)')
-pygame_icon = pygame.image.load(iconTexturePath)
-pygame.display.set_icon(pygame_icon)
-running = True
 
-#fonts
-giantFont = pygame.font.Font(arialFontPath, 100)
-font = pygame.font.Font(arialFontPath, 36)
-fontSmall = pygame.font.Font(arialFontPath, 20)
-
-dT=0
-
-game = gameClass.Game()
-
-#log creator
-def log(msg):
-    with open('saves/log.txt', 'w') as f:
-        f.write(msg)
-        print(msg)
-
-log("")
-
-#convert 1000 -> 1k ...
-#usage: reNumberer(game.storage[item])+game.abbreviate[item]
-def reNumberer(num):
-    for unit in ['','K','M']:
-        if abs(num) < 1000.0:
-            return f"{num:6.2f}{unit}"
-        num /= 1000.0
-    return f"{num:6.2f}B"
-
-#save game by object game
-def saveGame():
-    global game, models
-    game.active=True
-    saveObject={
-        "game": game
-    }
-    game.active=False
-    with open(savePath,'wb') as f:
-        pickle.dump(saveObject, f)
-    return True
-
-def loadGame():
-    global game, models, buildings
-    #if exists
-    if os.path.isfile(savePath):
-        with open(savePath, 'rb') as f:
-            saveObject = pickle.load(f)
-        game = saveObject["game"]
-        #matching versions?
-        if game.version!=version["version"]:
-            log("POSSIBLE ERROR: version of the file and game does not match")
-        #update buildings' sprite
-        for building in buildings:
-            buildings[building].model.image=pygame.image.load(buildingsGenericTexturePath + building + "/" + str(game.lvlStates[building]) + ".png")
-        return True
-    else:
-        return False
 #class for each row in the internal market
 class ItemInternalMarket:
     def __init__(self, item):
@@ -135,87 +118,34 @@ class ItemInternalMarket:
 rowsInternalMarket=[]
 for item in game.primaryMaterialsList:
     rowsInternalMarket.append(ItemInternalMarket(item))
-
-#most of the models used in a class
-class Models:
-    def __init__(self):
-        global game
-
-        #surfs for the nums of the storage menu
-        self.storageSurfs = {
-            "money": fontSmall.render(str(round(game.storage["money"])), True, "black"),
-            "wood": fontSmall.render(str(round(game.storage["wood"])), True, "black"),
-            "food": fontSmall.render(str(round(game.storage["food"])), True, "black"),
-            "stone": fontSmall.render(str(round(game.storage["stone"])), True, "black")
-        }
-
-        #Creacio de models
-        #buildings
-        self.thModel = button.Button(resolution[0]/2-40, resolution[1]/2-40, pygame.image.load(thGenericTexturePath + str(values["initialValues"]["lvls"]["TH"]) + ".png").convert_alpha(), 1)
-        self.forestModel = button.Button(resolution[0]/2-140, resolution[1]/2-40, pygame.image.load(forestGenericTexturePath + str(values["initialValues"]["lvls"]["forest"]) + ".png").convert_alpha(), 1)
-        self.farmModel = button.Button(resolution[0]/2-40, resolution[1]/2-140, pygame.image.load(farmGenericTexturePath + str(values["initialValues"]["lvls"]["farm"]) + ".png").convert_alpha(), 1)
-        self.quarryModel = button.Button(resolution[0]/2+60, resolution[1]/2-40, pygame.image.load(quarryGenericTexturePath + str(values["initialValues"]["lvls"]["quarry"]) + ".png").convert_alpha(), 1)
-        self.internalMarketModel = button.Button(resolution[0]/2-40, resolution[1]/2+60, pygame.image.load(internalMarketGenericTexturePath + str(values["initialValues"]["lvls"]["internalMarket"]) + ".png").convert_alpha(), 1)
-
-        #downmenu #-160-40+80 #-220-100+20+140
-        self.downgradeModel = button.Button(resolution[0]/2-220, resolution[1]-100, pygame.image.load(downgradeTexturePath).convert_alpha(), 1)
-        self.upgradeModel = button.Button(resolution[0]/2-100, resolution[1]-100, pygame.image.load(upgradeTexturePath).convert_alpha(), 1)
-        self.infoModel = button.Button(resolution[0]/2+20, resolution[1]-100, pygame.image.load(infoTexturePath).convert_alpha(), 1)
-        self.populationModel = button.Button(resolution[0]/2+140, resolution[1]-100, pygame.image.load(populationTexturePath).convert_alpha(), 1)
-        self.enterBuildingModel = button.Button(resolution[0]/2+140, resolution[1]-100, pygame.image.load(enterBuildingTexturePath).convert_alpha(), 1)
-        
-        #menu icons
-        self.confirmUpgradeModel = button.Button(resolution[0]/2+80, resolution[1]/2+80, pygame.image.load(acceptTexturePath).convert_alpha(), 1)
-        self.cancelUpgradeModel = button.Button(resolution[0]/2-160, resolution[1]/2+80, pygame.image.load(cancelTexturePath).convert_alpha(), 1)
-        self.cancelCenterModel = button.Button(resolution[0]/2-40, resolution[1]/2+80, pygame.image.load(cancelTexturePath).convert_alpha(), 1)
-
-        self.addCitizenModel = button.Button(resolution[0]/2+80, resolution[1]/2-20, pygame.image.load(addTexturePath).convert_alpha(), 1)
-        self.subtractCitizenModel = button.Button(resolution[0]/2-160, resolution[1]/2-20, pygame.image.load(subtractTexturePath).convert_alpha(), 1)
-        self.loadModel = button.Button(resolution[0]/2-250, resolution[1]/2-150, pygame.image.load(loadTexturePath).convert_alpha(), 1)
-        self.saveModel = button.Button(resolution[0]/2-250, resolution[1]/2+50, pygame.image.load(saveTexturePath).convert_alpha(), 1)
-        self.newSaveModel = button.Button(resolution[0]/2-250, resolution[1]/2-150, pygame.image.load(newSaveTexturePath).convert_alpha(), 1)
-        self.resumeModel = button.Button(resolution[0]/2-250, resolution[1]/2+50, pygame.image.load(resumeTexturePath).convert_alpha(), 1)
-
-        #images storage
-        self.moneyModel = button.Button(20, 20, pygame.image.load(moneyTexturePath).convert_alpha(), 0.7)
-        self.woodModel = button.Button(20, 100, pygame.image.load(woodTexturePath).convert_alpha(), 0.7)
-        self.foodModel = button.Button(20, 180, pygame.image.load(foodTexturePath).convert_alpha(), 0.7)
-        self.stoneModel = button.Button(20, 260, pygame.image.load(stoneTexturePath).convert_alpha(), 0.7)
-
-        self.saveSurf = font.render("", True, "black")
-
-models=Models()
-
-#class for each building
-class Building:
-    def __init__(self, model):
-        self.model = model
-    def onClick(self, name):
-        global game, models
-        #if is a new selection
-        if game.selectedBuilding != name:
-            #change internal and external selection name
-            game.selectedBuilding = name
-
-            #change surfaces and activateDownMenu()
-            game.activateDownMenu()
-
-        #if is a deselection do it reverse
-        else:
-            game.selectedBuilding = ""
-
-            game.deactivateDownMenu()
             
-#models to full object instances
-buildings = {
-    "TH": Building(models.thModel),
-    "forest": Building(models.forestModel),
-    "farm": Building(models.farmModel),
-    "quarry": Building(models.quarryModel),
-    "internalMarket": Building(models.internalMarketModel)
-}
-
 textMenuSurfs=[]
+
+#save game by object game
+def saveGame():
+    global game, models
+    game.active=True
+    saveObject={
+        "game": game
+    }
+    game.active=False
+    with open(savePath,'wb') as f:
+        pickle.dump(saveObject, f)
+    return True
+
+def loadGame():
+    global game, models, buildings
+    #if exists
+    if os.path.isfile(savePath):
+        with open(savePath, 'rb') as f:
+            saveObject = pickle.load(f)
+        game = saveObject["game"]
+        #matching versions?
+        if game.version!=version["version"]:
+            log("POSSIBLE ERROR: version of the file and game does not match")
+        return True
+    else:
+        return False
 
 #check and display menu
 def displayMenu():
@@ -464,6 +394,10 @@ if not initialMenu:
     game.active=True
     if config["loadSaveOnStart"]:
         loadGame()
+        #update buildings' sprite
+        for building in buildings:
+            buildings[building].model.image=pygame.image.load(buildingsGenericTexturePath + building + "/" + str(game.lvlStates[building]) + ".png")
+        
 
 #___________________________________Main loop _____________________________________________________________________________________________________________________________________
 while running:
@@ -669,6 +603,10 @@ while running:
         #resume
         if models.resumeModel.draw(screen, mouseLDown):
             if loadGame():
+                #update buildings' sprite
+                for building in buildings:
+                    buildings[building].model.image=pygame.image.load(buildingsGenericTexturePath + building + "/" + str(game.lvlStates[building]) + ".png")
+                
                 models.saveSurf=font.render("Game loaded successfully", True, "black")
                 initialMenu=False
                 game.active=True
@@ -702,6 +640,9 @@ while running:
         #load
         if models.loadModel.draw(screen, mouseLDown):
             if loadGame():
+                #update buildings' sprite
+                for building in buildings:
+                    buildings[building].model.image=pygame.image.load(buildingsGenericTexturePath + building + "/" + str(game.lvlStates[building]) + ".png")
                 models.saveSurf=font.render("Game loaded successfully", True, "black")
             else:
                 models.saveSurf=font.render("ERROR on loading, do you have a file?", True, "black")

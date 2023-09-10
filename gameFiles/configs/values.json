@@ -259,6 +259,14 @@
             {
                 "lvl":3,
                 "populationCapacity": 50
+            },
+            {
+                "lvl":4,
+                "populationCapacity": 500
+            },
+            {
+                "lvl":5,
+                "populationCapacity": 5000
             }
         ]
     },

@@ -5,5 +5,9 @@
     "FPS": {
         "show": false,
         "max": 30
+    },
+    "resolution": {
+        "width": 1280,
+        "height": 720
     }
 }

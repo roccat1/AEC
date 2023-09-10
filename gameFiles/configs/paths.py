@@ -49,4 +49,4 @@ langsJsonPath={
 arialFontPath= os.path.abspath("gameFiles/assets/fonts/arial.ttf")
 
 #save
-savePath= os.path.abspath("gameFiles/saves/save.pkl")
+savePath= os.path.abspath("saves/save.pkl")

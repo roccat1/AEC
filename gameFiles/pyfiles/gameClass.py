@@ -82,14 +82,6 @@ class Game:
 
         #initial lvls
         self.lvlStates = values["initialValues"]["lvls"]
-
-    def activateDownMenu(self):
-        self.displayDownMenu = True
-        return self.selectedBuilding
-
-    def deactivateDownMenu(self):
-        self.displayDownMenu = False
-        return ""
     
     def calculateAffordable(self, price):
         for item in self.materialList:
