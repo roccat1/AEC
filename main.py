@@ -7,13 +7,13 @@ ______________________________________
 |____________________________________|
 '''
 #Llibreries
-import pygame, json, pickle, os
+import pygame, json, pickle, os, sys
 from decimal import Decimal
 
 #arxius
-from paths import *
-import button
-import gameClass
+from gameFiles.configs.paths import *
+import gameFiles.pyfiles.gameClass as gameClass
+import gameFiles.pyfiles.button as button
 
 #values file
 with open(valuesJsonPath, "r") as f:

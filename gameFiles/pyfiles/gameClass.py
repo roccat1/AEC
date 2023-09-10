@@ -1,4 +1,4 @@
-from paths import *
+from gameFiles.configs.paths import *
 import json
 
 with open(valuesJsonPath, "r") as f:
