@@ -33,17 +33,12 @@ version save.pkl
 
 # To do (Not released)
 ## NOW
+- [ ] millora internal market que?
+- [ ] no downgradejar si te + poblacio
+- [ ] boto dessemipausar en pantalla
+- [ ] fer mes gran menu esquerra
 - [ ] balance
 - [ ] Repassar menus
-- [x] Comentar TOT el codi
-- [x] click curt fa raro
-- [x] Cost adding sells at internal market
-- [x] info menu text
-- [x] Save file (pickle, game i models)
-- [x] Tots menus tanquen en tornar a clickar
-- [x] Girar +- internal market
-- [x] Font en els fitxers del joc
-- [x] Calcular delta en pausa
 ## Futur
 - [ ] save file without pickle
 - [ ] Si canvia funcionament edifici o algo a la info!!!!!

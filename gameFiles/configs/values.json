@@ -36,10 +36,7 @@
             {
                 "lvl":5,
                 "price": {
-                    "money": 1000,
-                    "wood": 1000,
-                    "food": 1000,
-                    "stone": 1000
+                    "money": 9e99
                 }
             }
         ],
@@ -74,6 +71,12 @@
                     "money": 9999,
                     "wood": 9999
                 }
+            },
+            {
+                "lvl":5,
+                "price": {
+                    "money": 9e99
+                }
             }
         ],
         "farm": [
@@ -106,6 +109,12 @@
                 "price": {
                     "money": 9999,
                     "food": 9999
+                }
+            },
+            {
+                "lvl":5,
+                "price": {
+                    "money": 9e99
                 }
             }
         ],
@@ -140,6 +149,12 @@
                     "money": 9999,
                     "stone": 9999
                 }
+            },
+            {
+                "lvl":5,
+                "price": {
+                    "money": 9e99
+                }
             }
         ],
         "internalMarket": [
@@ -150,7 +165,7 @@
             {
                 "lvl":1,
                 "price": {
-                    "money": 10
+                    "money": 0
                 }
             },
             {
@@ -172,6 +187,12 @@
                 "price": {
                     "money": 9999,
                     "stone": 9999
+                }
+            },
+            {
+                "lvl":5,
+                "price": {
+                    "money": 9e99
                 }
             }
         ]
@@ -197,6 +218,11 @@
                 "lvl":3,
                 "income":50,
                 "populationCapacity": 25
+            },
+            {
+                "lvl":4,
+                "income":300,
+                "populationCapacity": 50
             }
         ],
         "farm": [
@@ -212,13 +238,18 @@
             },
             {
                 "lvl":2,
-                "income":25,
+                "income":15,
                 "populationCapacity": 5
             },
             {
                 "lvl":3,
-                "income":50,
+                "income":75,
                 "populationCapacity": 25
+            },
+            {
+                "lvl":4,
+                "income":400,
+                "populationCapacity": 50
             }
         ],
         "quarry": [
@@ -241,6 +272,11 @@
                 "lvl":3,
                 "income":50,
                 "populationCapacity": 25
+            },
+            {
+                "lvl":4,
+                "income":300,
+                "populationCapacity": 50
             }
         ],
         "TH": [
@@ -272,16 +308,16 @@
     },
     "initialValues":{
         "storage":{
-            "money": 100,
+            "money": 50,
             "wood": 0,
             "food": 0,
             "stone": 0
         },
         "lvls":{
             "TH": 1,
-            "forest": 1,
-            "farm": 1,
-            "quarry": 1,
+            "forest": 0,
+            "farm": 0,
+            "quarry": 0,
             "internalMarket": 1
         },
         "population": 1,
@@ -312,6 +348,18 @@
                 "food": 10,
                 "stone": 5,
                 "wood": 5
+            },
+            {
+                "lvl": 3,
+                "food": 15,
+                "stone": 10,
+                "wood": 10
+            },
+            {
+                "lvl": 3,
+                "food": 20,
+                "stone": 25,
+                "wood": 25
             }
         ],
         "costNew": {
@@ -319,9 +367,9 @@
         }
     },
     "internalMarket": {
-        "food": 1,
-        "stone": 0.25,
-        "wood": 0.5,
+        "food": 1.5,
+        "stone": 1.75,
+        "wood": 2,
         "add": {
             "stone": 20
         }
