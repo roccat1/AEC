@@ -36,6 +36,8 @@ saveTexturePath = os.path.abspath("gameFiles/assets/textures/menus/save.png")
 newSaveTexturePath = os.path.abspath("gameFiles/assets/textures/menus/newSave.png")
 resumeTexturePath = os.path.abspath("gameFiles/assets/textures/menus/resume.png")
 
+backgroundImageTexturePath = os.path.abspath("gameFiles/assets/textures/menus/background.png")
+
 #configs
 valuesJsonPath = os.path.abspath("gameFiles/configs/values.json")
 versionJsonPath = os.path.abspath("gameFiles/configs/version.json")

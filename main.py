@@ -185,21 +185,26 @@ def displayMenu():
     elif game.activeMenu=="downgrade":
         if not game.notAffordableShown:
             if game.lvlStates[game.selectedBuilding]>1:
-                textMenuSurfs=[font.render(f"Do you want to downgrade {game.selectedBuilding} {game.lvlStates[game.selectedBuilding]} -> {game.lvlStates[game.selectedBuilding]-1}", True, "black")]
+                textMenuSurfs=[font.render(f'Do you want to downgrade {game.selectedBuilding} {game.lvlStates[game.selectedBuilding]} -> {game.lvlStates[game.selectedBuilding]-1}', True, "black"),
+                               font.render(f'Max population: {values["stats"]["TH"][game.lvlStates["TH"]]["populationCapacity"]} -> {values["stats"]["TH"][game.lvlStates["TH"]-1]["populationCapacity"]}', True, "black")]
             else:
                 textMenuSurfs=[font.render("You can't downgrade your building", True, "black")]
         #confirm or cancel
         if models.confirmUpgradeModel.draw(screen, mouseLDown):
             #can downgrade?
             if game.lvlStates[game.selectedBuilding]>1:
-                game.lvlStates[game.selectedBuilding]-=1
-                buildings[game.selectedBuilding].model.image=pygame.image.load(buildingsGenericTexturePath + game.selectedBuilding + "/" + str(game.lvlStates[game.selectedBuilding]) + ".png")
-                game.notAffordableShown=False
-                game.activeMenu=None
-                game.displayCity=True
+                if game.population<=values["stats"]["TH"][game.lvlStates["TH"]-1]["populationCapacity"]:
+                    game.lvlStates[game.selectedBuilding]-=1
+                    buildings[game.selectedBuilding].model.image=pygame.image.load(buildingsGenericTexturePath + game.selectedBuilding + "/" + str(game.lvlStates[game.selectedBuilding]) + ".png")
+                    game.notAffordableShown=False
+                    game.activeMenu=None
+                    game.displayCity=True
+                else:
+                    textMenuSurfs=[font.render("You have to many population", True, "black")]
+                    game.notAffordableShown=True
             else:
                 game.notAffordableShown=True
-                textMenuSurfs=[font.render("You can't downgrade your building", True, "black")]
+                textMenuSurfs=[font.render("You can't downgrade your building due to the min lvl", True, "black")]
         elif models.cancelUpgradeModel.draw(screen, mouseLDown):
             game.notAffordableShown=False
             game.activeMenu=None
@@ -398,6 +403,7 @@ if not initialMenu:
         for building in buildings:
             buildings[building].model.image=pygame.image.load(buildingsGenericTexturePath + building + "/" + str(game.lvlStates[building]) + ".png")
         
+backgroundImage = pygame.image.load(backgroundImageTexturePath)
 
 #___________________________________Main loop _____________________________________________________________________________________________________________________________________
 while running:
@@ -432,7 +438,8 @@ while running:
                 game.updating=not game.updating
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("gray")
+    #screen.fill("gray")
+    screen.blit(backgroundImage, (0, 0))
 
     #____________________________________________________________
     if game.active:
@@ -454,9 +461,10 @@ while running:
         else: displayMenu()
         #downmenu
         if game.displayDownMenu:
-            
             #lvl and name
             surf=font.render(f"{game.selectedBuilding} (lvl {game.lvlStates[game.selectedBuilding]})", True, "black")
+            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2 - 10 - surf.get_width() // 2, resolution[1] - 150 - surf.get_height() // 2, surf.get_width()+20, surf.get_height()+20), border_radius=20)
+            pygame.draw.rect(screen, "black", pygame.Rect(resolution[0]/2 - 10 - surf.get_width() // 2, resolution[1] - 150 - surf.get_height() // 2, surf.get_width()+20, surf.get_height()+20), 5, border_radius=20)
             screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, resolution[1] - 140 - surf.get_height() // 2))
 
             #is info pressed?
@@ -522,7 +530,7 @@ while running:
         #storage side menu
         if game.displayStorageMenu:
             #background
-            pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 180, 350), border_radius=5)
+            pygame.draw.rect(screen, "white", pygame.Rect(10, 10, 220, 350), border_radius=5)
             #images
             models.moneyModel.draw(screen, mouseLDown)
             models.woodModel.draw(screen, mouseLDown)
@@ -556,17 +564,17 @@ while running:
         #population
         if game.displayPopulationMenu:
             #background
-            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-200, 10, 400, 80), border_radius=5)
+            pygame.draw.rect(screen, "white", pygame.Rect(resolution[0]/2-210, 10, 420, 80), border_radius=5)
 
             #population
             textMenuSurfsPopulationMenu=[]
             textMenuSurfsPopulationMenu.append(fontSmall.render(str(game.population) + f" Citizens ({game.occupiedPopulation} occupied)", True, "black"))
             
             #costSecond
-            line="Cost:"
+            line="Cost: "
             for item in game.materialList:
                 if item in values["citizens"]["costSecond"][game.lvlStates["TH"]]:
-                    line+=reNumberer(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1))+game.abbreviate[item] + "/s"
+                    line+=reNumberer(values["citizens"]["costSecond"][game.lvlStates["TH"]][item]*(game.population-1))+game.abbreviate[item] + "/s "
             textMenuSurfsPopulationMenu.append(fontSmall.render(line, True, "black"))
             
             #display
@@ -577,8 +585,12 @@ while running:
 
         #semipause
         if not game.updating:
-            surf=fontSmall.render("SEMIPAUSE (F1) if doesn't work your citizens cant survive, solve it (check Δ to be +)", True, "black",)
-            screen.blit(surf,(resolution[0]/2 - surf.get_width() // 2, -120 + resolution[1] - surf.get_height() // 2))
+            surf=fontSmall.render("SEMIPAUSE (F1)", True, "black",)
+            screen.blit(surf,(resolution[0] - 150 - surf.get_width() // 2, 10 - surf.get_height() // 2))
+            surf=fontSmall.render("You can't pay your citizens", True, "black",)
+            screen.blit(surf,(resolution[0] - 150 - surf.get_width() // 2, 20+10 - surf.get_height() // 2))
+            surf=fontSmall.render("Solve and press F1", True, "black",)
+            screen.blit(surf,(resolution[0] - 150 - surf.get_width() // 2, 40+10 - surf.get_height() // 2))
             #update delta
             for item in game.materialList:
                 game.realGains[item]=game.calcDelta(item)

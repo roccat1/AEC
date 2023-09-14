@@ -34,12 +34,13 @@ version save.pkl
 # To do (Not released)
 ## NOW
 - [ ] millora internal market que?
-- [ ] no downgradejar si te + poblacio
-- [ ] boto dessemipausar en pantalla
-- [ ] fer mes gran menu esquerra
+- [x] no downgradejar si te + poblacio
+- [x] fer mes gran menu esquerra
 - [ ] balance
-- [ ] Repassar menus
+- [~] Repassar menus
 ## Futur
+- [ ] stats a info
+- [ ] boto dessemipausar en pantalla
 - [ ] save file without pickle
 - [ ] Si canvia funcionament edifici o algo a la info!!!!!
 - [ ] prestecs
