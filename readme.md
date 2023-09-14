@@ -6,7 +6,7 @@
 
 # Funcionament
 
-Tens una poblacio, un ets tu i no consumeixes res, els altres consumeixen recursos/s. Per tal de generar recursos basics (wood, food, stone) has de millorar els edificis i posar persones a treballar-hi
+Tens una poblacio, un ets tu i no consumeixes res, els altres consumeixen recursos/s. Per tal de generar recursos basics (wood, food, stone) has de millorar els edificis i posar persones a treballar-hi.
 
 # About
 
