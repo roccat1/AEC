@@ -37,6 +37,7 @@ version save.pkl
 - [x] no downgradejar si te + poblacio
 - [x] fer mes gran menu esquerra
 - [ ] balance
+- [ ] si no pots pagar seguent frame a internal market no compris
 - [~] Repassar menus
 ## Futur
 - [ ] stats a info

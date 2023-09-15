@@ -48,7 +48,7 @@
             {
                 "lvl":1,
                 "price": {
-                    "money": 1
+                    "money": 30
                 }
             },
             {
@@ -87,7 +87,7 @@
             {
                 "lvl":1,
                 "price": {
-                    "money": 1
+                    "money": 5
                 }
             },
             {
@@ -126,7 +126,7 @@
             {
                 "lvl":1,
                 "price": {
-                    "money": 1
+                    "money": 30
                 }
             },
             {
@@ -233,7 +233,7 @@
             },
             {
                 "lvl":1,
-                "income":5,
+                "income":2,
                 "populationCapacity": 2
             },
             {
@@ -308,7 +308,7 @@
     },
     "initialValues":{
         "storage":{
-            "money": 50,
+            "money": 5,
             "wood": 0,
             "food": 0,
             "stone": 0
@@ -367,11 +367,11 @@
         }
     },
     "internalMarket": {
-        "food": 1.5,
-        "stone": 1.75,
+        "food": 1,
+        "stone": 3,
         "wood": 2,
         "add": {
-            "stone": 20
+            "food": 10
         }
     }
 }
